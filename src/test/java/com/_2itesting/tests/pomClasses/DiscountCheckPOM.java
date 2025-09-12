@@ -29,6 +29,27 @@ public class DiscountCheckPOM {
 
     public String getTotalAmount() {
         return totalElement.getText();
+
+
     }
 
+    // Cart lines
+    @FindBy(css = ".cart-subtotal .woocommerce-Price-amount")
+    private WebElement subtotalAmount;
+
+    // This row is created after applying code "2idiscount"
+    @FindBy(css = "tr.cart-discount.coupon-2idiscount .woocommerce-Price-amount")
+    private WebElement discountAmount1;
+
+    // Shipping (first available rate amount)
+    @FindBy(css = "tr.shipping .woocommerce-Price-amount")
+    private WebElement shippingAmount;
+
+    @FindBy(css = ".order-total .woocommerce-Price-amount")
+    private WebElement orderTotalAmount;
+
+    public String getSubtotalText() { return subtotalAmount.getText(); }
+    public String getDiscountText() { return discountAmount1.getText(); }
+    public String getShippingText() { return shippingAmount.getText(); }
+    public String getTotalText()    { return orderTotalAmount.getText(); }
 }
