@@ -22,11 +22,11 @@ public class BaseTest {
     public void tearDown(
     ) {
         //driver.close();
-        //driver.quit();
+//        driver.quit();
 //        String verificationErrorsString = verificationErrors.toString(); //Post test - gather together any verification errors
-//
+
 //        if(!verificationErrorsString.isEmpty()){ //If verificationErrorsString is *not* empty - there must have been errors...
 //            fail("Found verification errors :" + verificationErrorsString); //...So fail.
-//    }
+//  }
 }
 }

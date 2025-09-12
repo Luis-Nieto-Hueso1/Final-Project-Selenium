@@ -2,6 +2,8 @@ package com._2itesting.tests;
 
 import com._2itesting.tests.Utils.Helpers;
 import com._2itesting.tests.basetest.BaseTest;
+import com._2itesting.tests.pomClasses.ApplyDiscountPOM;
+import com._2itesting.tests.pomClasses.DiscountCheckPOM;
 import com._2itesting.tests.pomClasses.LoginPagePOM;
 import com._2itesting.tests.pomClasses.NavPagePOM;
 import org.hamcrest.Matchers;
@@ -55,13 +57,25 @@ public class TestProject1 extends BaseTest {
                 driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/cart/"));
 
 
-//
-//        myWait.until(drv -> drv.findElement(By.cssSelector(".cart-contents")).isDisplayed());
-//
-//        cartCheckout();
         // Step 3: Apply discount and verify calculations
-        applyCupon();
+        ApplyDiscountPOM applyDiscountPOM = new ApplyDiscountPOM(driver);
+        applyDiscountPOM.applyDiscountCode(Helpers.TWO_I_DISCOUNT_COUPON);
+//        assertThat("Coupon applied message should be displayed",
+//                applyDiscountPOM.isCouponAppliedMessageDisplayed(), is(true));
+
+
+        System.out.println("=== Cupon Applied ===");
+
+
         myWait.until(drv -> drv.findElement(By.cssSelector("tr.cart-discount.coupon-2idiscount td")).isDisplayed());
+
+        DiscountCheckPOM discountCheckPOM = new DiscountCheckPOM(driver);
+        discountCheckPOM.getTotalAmount();
+        discountCheckPOM.getDiscountAmount();
+
+
+
+
         WebElement discountAmount = driver.findElement(By.cssSelector("tr.cart-discount.coupon-2idiscount td"));
         String discountText = discountAmount.getText();
         System.out.println(discountText);
@@ -72,18 +86,5 @@ public class TestProject1 extends BaseTest {
 
     }
 
-    // Handles the login process
 
-    private void applyCupon(){
-
-        WebElement cupon = driver.findElement(By.cssSelector("#coupon_code"));
-
-        cupon.sendKeys(Helpers.TWO_I_DISCOUNT_COUPON);
-        driver.findElement(By.name("apply_coupon")).click();
-
-
-        WebElement shipping = driver.findElement(By.cssSelector(".shipping-calculator-button"));
-        JavascriptExecutor jsv = (JavascriptExecutor) driver;
-        jsv.executeScript("arguments[0].scrollIntoView({block:'center'});", shipping);
-    }
 }

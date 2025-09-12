@@ -1,5 +1,7 @@
 package com._2itesting.tests.Utils;
 
+import org.openqa.selenium.WebDriver;
+
 /**
  * Configuration class to manage test data and URLs
  * Eliminates hard-coding of values in test methods
@@ -25,4 +27,8 @@ public class Helpers {
     // Timeouts
     public static final int DEFAULT_TIMEOUT = 10;
     public static final int PAGE_LOAD_TIMEOUT = 30;
+
+    public static String getNoticeMessage(WebDriver driver) {
+        return driver.findElement(org.openqa.selenium.By.cssSelector("div.woocommerce-message")).getText();
+    }
 }
