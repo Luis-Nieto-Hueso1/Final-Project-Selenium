@@ -7,14 +7,10 @@ import com._2itesting.tests.pomClasses.ApplyDiscountPOM;
 import com._2itesting.tests.pomClasses.DiscountCheckPOM;
 import com._2itesting.tests.pomClasses.LoginPagePOM;
 import com._2itesting.tests.pomClasses.NavPagePOM;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -65,7 +61,7 @@ public class TestProject1 extends BaseTest {
         navPagePOM.navPageBasket();
         // Verify navigation to cart page
         assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/cart/"));
-
+        // Capture subtotal and total before applying discount
         DiscountCheckPOM totals = new DiscountCheckPOM(driver);
         double subtotalBefore = parseMoney(totals.getSubtotalText());
         double totalBefore = parseMoney(totals.getTotalText());
@@ -87,15 +83,14 @@ public class TestProject1 extends BaseTest {
         // Step 4: Verify discount calculations
         totals.getDiscountAmount();
 
-
+        // Verify discount row is present
         WebElement discountAmount = driver.findElement(By.cssSelector("tr.cart-discount.coupon-2idiscount td"));
         String discountText = discountAmount.getText();
         System.out.println(discountText);
-
+        // Verify discount row is present
         WebElement totalElement = driver.findElement(By.cssSelector(".order-total "));
         String actualTotal = totalElement.getText();
         System.out.println(actualTotal);
-
 
         // 7) Extract and parse monetary values
         double subtotal = parseMoney(totals.getSubtotalText());              // should match subtotalBefore
