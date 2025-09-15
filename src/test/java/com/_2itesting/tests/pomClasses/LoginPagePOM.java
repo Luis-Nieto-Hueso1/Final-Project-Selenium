@@ -24,6 +24,8 @@ public class LoginPagePOM {
     @FindBy(css = "button[name='login']")
     public WebElement submitButton;
 
+
+
     public LoginPagePOM setUsername(String username) {
         usernameField.clear();
         usernameField.sendKeys(username);
@@ -52,4 +54,6 @@ public class LoginPagePOM {
         }
         return loggedIn;
     }
+
+
 }
