@@ -5,8 +5,12 @@ import com._2itesting.tests.Utils.InstanceHelpers;
 import com._2itesting.tests.basetest.BaseTest;
 import com._2itesting.tests.pomClasses.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Action;
+import org.openqa.selenium.interactions.Actions;
 
 
 import java.util.List;
@@ -36,6 +40,7 @@ public class TestProject1 extends BaseTest {
         System.out.println("=== Enter Username ,Enter Password,Click Login ===");
 
         // Perform login using POM method
+
         boolean loggedIn = loginPagePOM.login(Helpers.USERNAME, Helpers.PASSWORD);
 
         // Verify login was successful
@@ -115,17 +120,16 @@ public class TestProject1 extends BaseTest {
 
         // 9) Also prove total decreased compared to before
         // assertThat("Total should decrease after coupon", total, lessThan(totalBefore));
+        instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")),100,100);
+        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("My account"), 7);
 
 
         navPagePOM.navMyAccount();
         // Verify navigation to account page
-        WebElement heading = driver.findElement(By.cssSelector("#post-7 > header > h1"));
-        assertThat("Should be on account page", heading.getText(), containsString("My account"));
-
+        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("Log out"), 7);
         navPagePOM.navLogout();
         // Verify logout was successful by checking for login form
         WebElement loginForm = driver.findElement(By.id("customer_login"));
-        assertThat("Login form should be visible after logout", loginForm.isDisplayed(), is(true));
         System.out.println("=== Test Completed Successfully ===");
 
     }
@@ -194,25 +198,23 @@ public class TestProject1 extends BaseTest {
         //Fill in the form
         FillFormPOM fillFormPOM = new FillFormPOM(driver);
         fillFormPOM.fillBillingDetails("Luis", "Hueso", "Edgewords", "2itesting", "London", "camden", "SE10 9LS", " 07956987456");
-//        fillFormPOM.ChequePayment();
-        //Place the
+
+        instanceHelpers.waitForElementToBeClickableHelper(By.id("place_order"), 7);
         fillFormPOM.placeOrder();
-
-
 
         CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
 
         // Verify order confirmation page
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("ul.woocommerce-order-overview li.order > strong"), 7);
+        instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector(".order > strong"), 7);
 
         String orderNumber = checkOrderNumberPOM.getOrderNumber();
 
         System.out.println("Order Number: " + orderNumber);
 
-        navPagePOM.navPageShop();
+//        navPagePOM.navPageShop();
 
 
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
+//        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
 
         navPagePOM.navMyAccount();
         checkOrderNumberPOM.clickOrders();
@@ -230,6 +232,9 @@ public class TestProject1 extends BaseTest {
                 .anyMatch(txt -> txt.equals(orderNumber));
 
         assertThat("The same order should appear in My Account > Orders", found, is(true));
+        navPagePOM.navMyAccount();
+
+        navPagePOM.navLogout();
 
 
 

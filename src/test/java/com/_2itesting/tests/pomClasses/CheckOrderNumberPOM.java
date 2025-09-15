@@ -12,7 +12,7 @@ public class CheckOrderNumberPOM    {
         PageFactory.initElements(driver, this);
 
     }
-   @FindBy(css = "ul.woocommerce-order-overview li.order > strong")
+   @FindBy(css = ".order > strong")
     public WebElement orderNumberField;
     @FindBy(linkText = "Orders")
     public WebElement ordersField;

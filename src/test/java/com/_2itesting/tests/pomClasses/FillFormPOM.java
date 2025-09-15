@@ -69,6 +69,7 @@ public class FillFormPOM {
 
         phoneField.clear();
         phoneField.sendKeys(phone);
+
     }
 
     public void ChequePayment() {
