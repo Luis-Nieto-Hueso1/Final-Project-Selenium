@@ -5,10 +5,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class NavPagePOM {
+public class NavPOM {
     private WebDriver driver;
 
-    public NavPagePOM(WebDriver driver) {
+    public NavPOM(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
 

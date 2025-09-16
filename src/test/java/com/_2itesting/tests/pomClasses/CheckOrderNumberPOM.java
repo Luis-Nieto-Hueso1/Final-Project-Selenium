@@ -12,6 +12,7 @@ public class CheckOrderNumberPOM    {
         PageFactory.initElements(driver, this);
 
     }
+
    @FindBy(css = ".order > strong")
     public WebElement orderNumberField;
     @FindBy(linkText = "Orders")

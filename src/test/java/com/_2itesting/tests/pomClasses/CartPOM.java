@@ -1,17 +1,44 @@
 package com._2itesting.tests.pomClasses;
 
-import org.openqa.selenium.By;
+import com._2itesting.tests.Utils.Helpers;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class DiscountCheckPOM {
+public class CartPOM {
     private WebDriver driver;
 
-    public DiscountCheckPOM(WebDriver driver) {
+    public CartPOM(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
+    }
+    @FindBy(id = "coupon_code")
+    private WebElement coupon;
+
+    @FindBy(name = "apply_coupon")
+    private WebElement applyCouponButton;
+
+
+    public void applyCoupon(String discount) {
+        coupon.clear();              // optional: clears existing text
+        coupon.sendKeys(discount);
+    }
+
+    public void clickApplyCoupon() {
+        applyCouponButton.click();
+    }
+
+    // (Optional) combine into one convenience method
+    public void applyDiscountCode(String code) {
+        applyCoupon(code);
+        clickApplyCoupon();
+    }
+
+    public Boolean isCouponAppliedMessageDisplayed() {
+        String expectedMessage = "Coupon code applied successfully.";
+        String actualMessage = Helpers.getNoticeMessage(driver);
+        return actualMessage.contains(expectedMessage);
     }
 
 
@@ -52,4 +79,19 @@ public class DiscountCheckPOM {
     public String getDiscountText() { return discountAmount1.getText(); }
     public String getShippingText() { return shippingAmount.getText(); }
     public String getTotalText()    { return orderTotalAmount.getText(); }
+
+    @FindBy(css = "a.woocommerce-remove-coupon")
+    private WebElement removeCouponLink;
+    @FindBy(css = "a.remove"  )
+    private WebElement removeClothes;
+    public void clickRemoveCoupon() {
+        removeCouponLink.click();
+    }
+    public void clickRemoveClothes() {
+        removeClothes.click();
+    }
+
+
+
+
 }
