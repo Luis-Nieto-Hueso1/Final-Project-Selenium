@@ -254,7 +254,13 @@ public class TestProject1 extends BaseTest {
         NavPOM navPOM = new NavPOM(driver);
 
         navPOM.navPageBasket();
-
+        List<WebElement> removeCoupon = driver.findElements(By.cssSelector("a.woocommerce-remove-coupon"));
+        for (WebElement btn : removeCoupon) {
+            btn.click();
+            // Optionally, wait a moment for the cart to update
+            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
+            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.woocommerce-remove-coupon"), 5);
+        }
         List<WebElement> removeButtons = driver.findElements(By.cssSelector("a.remove"));
         for (WebElement btn : removeButtons) {
             btn.click();
@@ -262,6 +268,7 @@ public class TestProject1 extends BaseTest {
             InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
             instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.remove"), 5);
         }
+
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
 
 
