@@ -1,17 +1,35 @@
 package com._2itesting.tests.pomClasses;
 
 import com._2itesting.tests.Utils.Helpers;
+import com._2itesting.tests.Utils.InstanceHelpers;
+import net.bytebuddy.utility.dispatcher.JavaDispatcher;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 public class CartPOM {
     private WebDriver driver;
+    private final WebDriverWait wait;
+
+
+
 
     public CartPOM(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);
+
+
     }
     @FindBy(id = "coupon_code")
     private WebElement coupon;
@@ -81,17 +99,27 @@ public class CartPOM {
     public String getTotalText()    { return orderTotalAmount.getText(); }
 
     @FindBy(css = "a.woocommerce-remove-coupon")
-    private WebElement removeCouponLink;
+    private List<WebElement> removeCouponSelector;
     @FindBy(css = "a.remove"  )
-    private WebElement removeClothes;
-    public void clickRemoveCoupon() {
-        removeCouponLink.click();
-    }
-    public void clickRemoveClothes() {
-        removeClothes.click();
-    }
+    private List<WebElement> removeClothes;
 
 
+    public void clearCart() {
+        List<WebElement> removeCoupon =  removeCouponSelector;
+        for (WebElement btn : removeCoupon) {
+            btn.click();
+            // Optionally, wait a moment for the cart to update
+            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
+            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.woocommerce-remove-coupon"), 5);
+        }
+        List<WebElement> removeButtons =  removeClothes;
+        for (WebElement btn : removeButtons) {
+            btn.click();
+            // Optionally, wait a moment for the cart to update
+            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
+            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.remove"), 5);
+        }
+    }
 
 
 }

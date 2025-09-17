@@ -193,6 +193,7 @@ public class TestProject1 extends BaseTest {
         checkoutPOM.fillBillingDetails("Luis", "Hueso", "Edgewords", "2itesting", "London", "camden", "SE10 9LS", " 07956987456");
 
         instanceHelpers.waitForElementToBeClickableHelper(By.id("place_order"), 7);
+
         checkoutPOM.placeOrder();
 
         CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
@@ -214,15 +215,10 @@ public class TestProject1 extends BaseTest {
         // Verify navigation to orders page
         assertThat("Should be redirected to orders page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/my-account/orders/"));
         // Find all order number links in the orders table
-        List<WebElement> orderLinks = driver.findElements(
-                By.cssSelector("table.woocommerce-orders-table tbody tr td.woocommerce-orders-table__cell-order-number a")
-        );
+        List<WebElement> orderLinks = driver.findElements(By.cssSelector("table.woocommerce-orders-table tbody tr td.woocommerce-orders-table__cell-order-number a"));
 
         // Check one of them matches the captured number (table shows “#12345”)
-        boolean found = orderLinks.stream()
-                .map(WebElement::getText)
-                .map(txt -> txt.replace("#", "").trim())
-                .anyMatch(txt -> txt.equals(orderNumber));
+        boolean found = orderLinks.stream().map(WebElement::getText).map(txt -> txt.replace("#", "").trim()).anyMatch(txt -> txt.equals(orderNumber));
 
         assertThat("The same order should appear in My Account > Orders", found, is(true));
         navPOM.navMyAccount();
@@ -232,6 +228,7 @@ public class TestProject1 extends BaseTest {
 
         System.out.println("=== Test Completed Successfully ===");
     }
+
     @Test
     public void TestProjectIMporved() {
         System.out.println("=== Starting Test Setup ===");
@@ -243,42 +240,27 @@ public class TestProject1 extends BaseTest {
         final String productName = "Polo"; // replace with param later
         final String coupon = Helpers.TWO_I_DISCOUNT_COUPON;
         final String password = Helpers.PASSWORD;
-        ReportUtils.logInputs(username,password, productName, coupon);
+        ReportUtils.logInputs(username, password, productName, coupon);
 
         LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
-        boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
-        assertThat("login Successful", loggedIn, is(true));
-        assertThat("Should be redirected to account page after login",
-                driver.getCurrentUrl(), containsString("my-account"));
-
+        CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
 
+        boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
+        assertThat("login Successful", loggedIn, is(true));
+        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+
         navPOM.navPageBasket();
-        List<WebElement> removeCoupon = driver.findElements(By.cssSelector("a.woocommerce-remove-coupon"));
-        for (WebElement btn : removeCoupon) {
-            btn.click();
-            // Optionally, wait a moment for the cart to update
-            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.woocommerce-remove-coupon"), 5);
-        }
-        List<WebElement> removeButtons = driver.findElements(By.cssSelector("a.remove"));
-        for (WebElement btn : removeButtons) {
-            btn.click();
-            // Optionally, wait a moment for the cart to update
-            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.remove"), 5);
-        }
+        cart.clearCart();
 
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-
 
         System.out.println("=== Cart cleared successfully ===");
 
         navPOM.navPageShop();
         navPOM.navPagePolo(); // later: navPOM.selectProductByName(productName)
 
-        assertThat("Should be on Polo shirt product page",
-                driver.getCurrentUrl(), containsString("/product/polo/"));
+        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("/product/polo/"));
 
         navPOM.navAddCart();
         System.out.println("=== Product added to basket ===");
@@ -287,33 +269,22 @@ public class TestProject1 extends BaseTest {
 
         navPOM.navPageBasket();
 
-        assertThat("Should be redirected to basket",
-                driver.getCurrentUrl(), containsString("/cart/"));
+        assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("/cart/"));
 
-        CartPOM cart = new CartPOM(driver);
+//        CartPOM cart = new CartPOM(driver);
 
         // BEFORE totals snapshot
-        TotalsSnapshot before = TotalsSnapshot.of(
-                cart.getSubtotalText(),
-                "£0.00", // no discount yet
-                cart.getShippingText(),
-                cart.getTotalText()
-        );
+        TotalsSnapshot before = TotalsSnapshot.of(cart.getSubtotalText(), "£0.00", // no discount yet
+                cart.getShippingText(), cart.getTotalText());
         ReportUtils.logTotals("Totals BEFORE coupon", before);
 
         // Apply coupon
         cart.applyDiscountCode(coupon);
         System.out.println("=== Coupon applied ===");
-        instanceHelpers.waitForElementToBeClickableHelper(
-                By.cssSelector("tr.cart-discount td"), 7);
+        instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("tr.cart-discount td"), 7);
 
         // AFTER totals snapshot
-        TotalsSnapshot after = TotalsSnapshot.of(
-                cart.getSubtotalText(),
-                cart.getDiscountText(),
-                cart.getShippingText(),
-                cart.getTotalText()
-        );
+        TotalsSnapshot after = TotalsSnapshot.of(cart.getSubtotalText(), cart.getDiscountText(), cart.getShippingText(), cart.getTotalText());
         ReportUtils.logTotals("Totals AFTER coupon", after);
 
         // Expectations — make them explicit in the log
@@ -327,23 +298,16 @@ public class TestProject1 extends BaseTest {
 
         // Discount ≈ 25% of subtotal
         var discountDiff = after.discount().subtract(expectedDiscount).abs();
-        assertThat("Discount should be 25% of subtotal (±1p)",
-                discountDiff.compareTo(penny) <= 0);
-
-        // Total arithmetic
-        var totalDiff = after.total().subtract(expectedTotal).abs();
+        assertThat("Discount should be 25% of subtotal (±1p)", discountDiff.compareTo(penny) <= 0);
 
 
-        // Total decreased vs BEFORE
-//        assertThat("Total should decrease after coupon",
-//                after.total().compareTo(before.total()) < 0);
-
-        instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 100, 100);
+        instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 1000, 1);
 
         instanceHelpers.waitForElementToBeClickableHelper(By.linkText("My account"), 7);
 
 
-        navPOM.navMyAccount();
+        driver.get(Helpers.ACCOUNT_URL);
+//
         // Verify navigation to account page
         instanceHelpers.waitForElementToBeClickableHelper(By.linkText("Log out"), 7);
         navPOM.navLogout();
@@ -364,6 +328,7 @@ public class TestProject1 extends BaseTest {
     private double round2(double v) {
         return Math.round(v * 100.0) / 100.0;
     }
+
     @Test
     public void clearCart() {
         System.out.println("=== Starting Test Setup ===");
@@ -375,13 +340,12 @@ public class TestProject1 extends BaseTest {
         final String productName = "Polo"; // replace with param later
         final String coupon = Helpers.TWO_I_DISCOUNT_COUPON;
         final String password = Helpers.PASSWORD;
-        ReportUtils.logInputs(username,password, productName, coupon);
+        ReportUtils.logInputs(username, password, productName, coupon);
 
         LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
         boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
         assertThat("login Successful", loggedIn, is(true));
-        assertThat("Should be redirected to account page after login",
-                driver.getCurrentUrl(), containsString("my-account"));
+        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
 
         NavPOM navPOM = new NavPOM(driver);
 
