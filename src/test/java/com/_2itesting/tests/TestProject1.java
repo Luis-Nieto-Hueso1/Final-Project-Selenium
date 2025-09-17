@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 
+import java.time.Duration;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -18,245 +19,15 @@ public class TestProject1 extends BaseTest {
 
     @Test
     public void firstTest() {
-
         // Step 1: Navigate to login page and authenticate
-        //navigateShopAndLogin();
-        System.out.println("=== Starting Test Setup ===");
-
-        // Navigate directly to the My Account login page of the demo site
-        driver.get(Helpers.LOGIN_URL);
-
-        // Dismiss any store notice if present
-        driver.findElement(By.cssSelector(".woocommerce-store-notice__dismiss-link")).click();
-
-        // Instantiate POM for login interactions
-        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
-
-        System.out.println("=== Enter Username ,Enter Password,Click Login ===");
-
-        // Perform login using POM method
-
-        boolean loggedIn = loginPagePOM.login(Helpers.USERNAME, Helpers.PASSWORD);
-
-        // Verify login was successful
-        assertThat("login Successful", loggedIn, is(true));
-
-        // Verify login was successful
-        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
-
-
-        // Step 2: Navigate to shop and select product
-        NavPOM navPOM = new NavPOM(driver);
-
-        navPOM.navPageShop();
-
-        navPOM.navPagePolo();
-
-        // Verify navigation to Polo product page
-        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/product/polo/"));
-
-        // Add product to cart
-        navPOM.navAddCart();
-
-        System.out.println("=== Product added to basket ===");
-
-        // Wait for "View cart" link to be visible and click it
-        InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
-
-        navPOM.navPageBasket();
-        // Verify navigation to cart page
-        assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/cart/"));
-        // Capture subtotal and total before applying discount
-        CartPOM totals = new CartPOM(driver);
-        double subtotalBefore = parseMoney(totals.getSubtotalText());
-        double totalBefore = parseMoney(totals.getTotalText());
-
-        totals.getTotalAmount();
-
-        // Step 3: Apply discount and verify calculations
-//
-        totals.applyDiscountCode(Helpers.TWO_I_DISCOUNT_COUPON);
-        // Optional assertion for coupon toast; left commented intentionally by author
-        // assertThat("Coupon applied message should be displayed",
-        //         applyDiscountPOM.isCouponAppliedMessageDisplayed(), is(true));
-
-        System.out.println("=== Cupon Applied ===");
-
-
-        instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("tr.cart-discount.coupon-2idiscount td"), 7);
-
-        // Step 4: Verify discount calculations
-        totals.getDiscountAmount();
-
-        // Verify discount row is present
-        WebElement discountAmount = driver.findElement(By.cssSelector("tr.cart-discount.coupon-2idiscount td"));
-        String discountText = discountAmount.getText();
-        System.out.println(discountText);
-        // Verify discount row is present
-        WebElement totalElement = driver.findElement(By.cssSelector(".order-total "));
-        String actualTotal = totalElement.getText();
-        System.out.println(actualTotal);
-
-        // 7) Extract and parse monetary values
-        double subtotal = parseMoney(totals.getSubtotalText());              // should match subtotalBefore
-        double discount = Math.abs(parseMoney(totals.getDiscountText()));    // "-£4.50" -> 4.50
-        double shipping = parseMoney(totals.getShippingText());              // e.g. £3.95
-        double total = parseMoney(totals.getTotalText());
-
-        double expectedDiscount = round2(subtotal * 0.25);
-        assertThat("Discount should be ~25% of subtotal", Math.abs(discount - expectedDiscount), lessThanOrEqualTo(0.01));
-
-        // 8) Assert total arithmetic: subtotal - discount + shipping == total (to within 1p)
-        double expectedTotal = round2(subtotal - discount + shipping);
-        assertThat("Total equals subtotal - discount + shipping (±1p)", Math.abs(total - expectedTotal), lessThanOrEqualTo(0.01));
-
-        // 9) Also prove total decreased compared to before
-        // assertThat("Total should decrease after coupon", total, lessThan(totalBefore));
-        instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 100, 100);
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("My account"), 7);
-
-
-        navPOM.navMyAccount();
-        // Verify navigation to account page
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("Log out"), 7);
-        navPOM.navLogout();
-
-        System.out.println("=== Test Completed Successfully ===");
-
-    }
-
-    @Test
-    public void secondTest() {
-
-        // Step 1: Navigate to login page and authenticate
-        //navigateShopAndLogin();
-        System.out.println("=== Starting Test Setup ===");
-
-        // Navigate directly to the My Account login page of the demo site
-        driver.get(Helpers.LOGIN_URL);
-
-        // Dismiss any store notice if present
-        driver.findElement(By.cssSelector(".woocommerce-store-notice__dismiss-link")).click();
-
-        // Instantiate POM for login interactions
-        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
-
-        System.out.println("=== Enter Username ,Enter Password,Click Login ===");
-
-        // Perform login using POM method
-        boolean loggedIn = loginPagePOM.login(Helpers.USERNAME, Helpers.PASSWORD);
-
-        // Verify login was successful
-        assertThat("login Successful", loggedIn, is(true));
-
-        // Verify login was successful
-        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
-
-
-        // Step 2: Navigate to shop and select product
-        NavPOM navPOM = new NavPOM(driver);
-
-        navPOM.navPageShop();
-
-        navPOM.navPagePolo();
-
-        // Verify navigation to Polo product page
-        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/product/polo/"));
-
-        // Add product to cart
-        navPOM.navAddCart();
-
-        System.out.println("=== Product added to basket ===");
-
-        // Wait for "View cart" link to be visible and click it
-        InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
-
-        navPOM.navPageBasket();
-        // Verify navigation to cart page
-        assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/cart/"));
-
-        // Step 3: Apply discount and verify calculations
-        CartPOM applyDiscountPOM = new CartPOM(driver);
-
-        applyDiscountPOM.applyDiscountCode(Helpers.TWO_I_DISCOUNT_COUPON);
-
-        navPOM.navCheckout();
-        // Verify navigation to checkout page
-        assertThat("Should be redirected to checkout", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/checkout/"));
-
-        //Fill in the form
-        CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
-        checkoutPOM.fillBillingDetails("Luis", "Hueso", "Edgewords", "2itesting", "London", "camden", "SE10 9LS", " 07956987456");
-
-        instanceHelpers.waitForElementToBeClickableHelper(By.id("place_order"), 7);
-
-        checkoutPOM.placeOrder();
-
-        CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
-
-        // Verify order confirmation page
-        instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector(".order > strong"), 7);
-
-        String orderNumber = checkOrderNumberPOM.getOrderNumber();
-
-        System.out.println("Order Number: " + orderNumber);
-
-//        navPOM.navPageShop();
-
-
-//        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
-
-        navPOM.navMyAccount();
-        checkOrderNumberPOM.clickOrders();
-        // Verify navigation to orders page
-        assertThat("Should be redirected to orders page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/my-account/orders/"));
-        // Find all order number links in the orders table
-        List<WebElement> orderLinks = driver.findElements(By.cssSelector("table.woocommerce-orders-table tbody tr td.woocommerce-orders-table__cell-order-number a"));
-
-        // Check one of them matches the captured number (table shows “#12345”)
-        boolean found = orderLinks.stream().map(WebElement::getText).map(txt -> txt.replace("#", "").trim()).anyMatch(txt -> txt.equals(orderNumber));
-
-        assertThat("The same order should appear in My Account > Orders", found, is(true));
-        navPOM.navMyAccount();
-
-        navPOM.navLogout();
-
-
-        System.out.println("=== Test Completed Successfully ===");
-    }
-
-    @Test
-    public void TestProjectIMporved() {
-        System.out.println("=== Starting Test Setup ===");
-        driver.get(Helpers.LOGIN_URL);
-        driver.findElement(By.cssSelector(".woocommerce-store-notice__dismiss-link")).click();
-
-        // Inputs: make them explicit and parameterisable later
-        final String username = Helpers.USERNAME;
-        final String productName = "Polo"; // replace with param later
         final String coupon = Helpers.TWO_I_DISCOUNT_COUPON;
-        final String password = Helpers.PASSWORD;
-        ReportUtils.logInputs(username, password, productName, coupon);
-
-        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
+        System.out.println("=== Starting Test Setup ===");
         CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
-
-        boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
-        assertThat("login Successful", loggedIn, is(true));
-        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
-
-        navPOM.navPageBasket();
-        cart.clearCart();
+        waiter = new Waiter(driver, Duration.ofSeconds(10));
 
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-
-        System.out.println("=== Cart cleared successfully ===");
-
+        // Step 2: Navigate to shop and select product
         navPOM.navPageShop();
         navPOM.navPagePolo(); // later: navPOM.selectProductByName(productName)
 
@@ -265,13 +36,12 @@ public class TestProject1 extends BaseTest {
         navPOM.navAddCart();
         System.out.println("=== Product added to basket ===");
 
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
+        waiter.clickable(By.linkText("View cart"));
 
         navPOM.navPageBasket();
 
         assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("/cart/"));
 
-//        CartPOM cart = new CartPOM(driver);
 
         // BEFORE totals snapshot
         TotalsSnapshot before = TotalsSnapshot.of(cart.getSubtotalText(), "£0.00", // no discount yet
@@ -281,7 +51,7 @@ public class TestProject1 extends BaseTest {
         // Apply coupon
         cart.applyDiscountCode(coupon);
         System.out.println("=== Coupon applied ===");
-        instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("tr.cart-discount td"), 7);
+        waiter.clickable(By.cssSelector("tr.cart-discount td"));
 
         // AFTER totals snapshot
         TotalsSnapshot after = TotalsSnapshot.of(cart.getSubtotalText(), cart.getDiscountText(), cart.getShippingText(), cart.getTotalText());
@@ -303,18 +73,93 @@ public class TestProject1 extends BaseTest {
 
         instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 1000, 1);
 
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("My account"), 7);
-
+        waiter.clickable(By.linkText("My account"));
+//        navPOM.navMyAccount();
 
         driver.get(Helpers.ACCOUNT_URL);
 //
         // Verify navigation to account page
-        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("Log out"), 7);
+        waiter.clickable(By.linkText("Log out"));
         navPOM.navLogout();
-        // Verify logout was successful by checking for login form
-        WebElement loginForm = driver.findElement(By.id("customer_login"));
+
         System.out.println("=== Test Completed Successfully ===");
     }
+
+    @Test
+    public void secondTest() {
+
+        // Step 2: Navigate to shop and select product
+        NavPOM navPOM = new NavPOM(driver);
+        CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
+        waiter = new Waiter(driver, Duration.ofSeconds(10));
+        CartPOM applyDiscountPOM = new CartPOM(driver);
+        CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
+
+        navPOM.navPageShop();
+        navPOM.navPagePolo();
+
+        // Verify navigation to Polo product page
+        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/product/polo/"));
+        // Add product to cart
+        navPOM.navAddCart();
+
+        System.out.println("=== Product added to basket ===");
+        // Wait for "View cart" link to be visible and click it
+        InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
+
+        waiter.clickable(By.linkText("View cart"));
+
+        navPOM.navPageBasket();
+        // Verify navigation to cart page
+        assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/cart/"));
+        // Step 3: Apply discount and verify calculations
+
+
+        applyDiscountPOM.applyDiscountCode(Helpers.TWO_I_DISCOUNT_COUPON);
+
+        navPOM.navCheckout();
+        // Verify navigation to check out page
+        assertThat("Should be redirected to checkout", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/checkout/"));
+
+        //Fill in the form
+
+        checkoutPOM.fillBillingDetails("Luis", "Hueso", "Edgewords", "2itesting", "London", "camden", "SE10 9LS", " 07956987456");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        checkoutPOM.selectChequeSimple();
+
+        waiter.clickable(By.id("place_order"));
+
+        checkoutPOM.placeOrder();
+
+        // Verify order confirmation page
+        waiter.clickable(By.cssSelector(".order > strong"));
+
+        String orderNumber = checkOrderNumberPOM.getOrderNumber();
+
+        System.out.println("Order Number: " + orderNumber);
+
+        navPOM.navMyAccount();
+        checkOrderNumberPOM.clickOrders();
+        // Verify navigation to orders page
+        assertThat("Should be redirected to orders page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/my-account/orders/"));
+        // Find all order number links in the orders table
+        List<WebElement> orderLinks = driver.findElements(By.cssSelector("table.woocommerce-orders-table tbody tr td.woocommerce-orders-table__cell-order-number a"));
+
+        // Check one of them matches the captured number (table shows “#12345”)
+        boolean found = orderLinks.stream().map(WebElement::getText).map(txt -> txt.replace("#", "").trim()).anyMatch(txt -> txt.equals(orderNumber));
+
+        assertThat("The same order should appear in My Account > Orders", found, is(true));
+        navPOM.navMyAccount();
+
+        navPOM.navLogout();
+        System.out.println("=== Test Completed Successfully ===");
+    }
+
 
     private double parseMoney(String text) {
         // Keep digits, dot, comma, and minus; normalise comma to dot
@@ -329,38 +174,118 @@ public class TestProject1 extends BaseTest {
         return Math.round(v * 100.0) / 100.0;
     }
 
-    @Test
-    public void clearCart() {
-        System.out.println("=== Starting Test Setup ===");
-        driver.get(Helpers.LOGIN_URL);
-        driver.findElement(By.cssSelector(".woocommerce-store-notice__dismiss-link")).click();
 
-        // Inputs: make them explicit and parameterisable later
-        final String username = Helpers.USERNAME;
-        final String productName = "Polo"; // replace with param later
-        final String coupon = Helpers.TWO_I_DISCOUNT_COUPON;
-        final String password = Helpers.PASSWORD;
-        ReportUtils.logInputs(username, password, productName, coupon);
+//@Test
+//    public void secondTest1() {
+//
+//        System.out.println("=== Starting Test Setup ===");
+//        driver.get(Helpers.LOGIN_URL);
+//        driver.findElement(By.cssSelector(".woocommerce-store-notice__dismiss-link")).click();
+//
+//        // Inputs: make them explicit and parameterisable later
+//        final String username = Helpers.USERNAME;
+//        final String productName = "Polo"; // replace with param later
+//        final String coupon = Helpers.TWO_I_DISCOUNT_COUPON;
+//        final String password = Helpers.PASSWORD;
+//        ReportUtils.logInputs(username, password, productName, coupon);
+//
+//        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
+//        CartPOM cart = new CartPOM(driver);
+//        NavPOM navPOM = new NavPOM(driver);
+//
+//        boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
+//        assertThat("login Successful", loggedIn, is(true));
+//        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+//
+//        navPOM.navPageBasket();
+//        cart.clearCart();
+//
+//        InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
+//
+//        System.out.println("=== Cart cleared successfully ===");
+//
+//        // Step 2: Navigate to shop and select product
+//
+//
+//        navPOM.navPageShop();
+//
+//        navPOM.navPagePolo();
+//
+//        // Verify navigation to Polo product page
+//        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/product/polo/"));
+//
+//        // Add product to cart
+//        navPOM.navAddCart();
+//
+//        System.out.println("=== Product added to basket ===");
+//
+//        // Wait for "View cart" link to be visible and click it
+//
+//
+//        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
+//
+//        navPOM.navPageBasket();
+//        // Verify navigation to cart page
+//        assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/cart/"));
+//
+//        // Step 3: Apply discount and verify calculations
+//        CartPOM applyDiscountPOM = new CartPOM(driver);
+//
+//        applyDiscountPOM.applyDiscountCode(Helpers.TWO_I_DISCOUNT_COUPON);
+//
+//        navPOM.navCheckout();
+//        // Verify navigation to checkout page
+//        assertThat("Should be redirected to checkout", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/checkout/"));
+//
+//        //Fill in the form
+//        CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
+//        checkoutPOM.fillBillingDetails("Luis", "Hueso", "Edgewords", "2itesting", "London", "camden", "SE10 9LS", " 07956987456");
+//
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//
+//        checkoutPOM.selectChequeSimple();
+//
+//        instanceHelpers.waitForElementToBeClickableHelper(By.id("place_order"), 7);
+//
+//        checkoutPOM.placeOrder();
+//
+//        CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
+//
+//        // Verify order confirmation page
+//        instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector(".order > strong"), 7);
+//
+//        String orderNumber = checkOrderNumberPOM.getOrderNumber();
+//
+//        System.out.println("Order Number: " + orderNumber);
+//
+////        navPOM.navPageShop();
+//
+//
+////        instanceHelpers.waitForElementToBeClickableHelper(By.linkText("View cart"), 7);
+//
+//        navPOM.navMyAccount();
+//        checkOrderNumberPOM.clickOrders();
+//        // Verify navigation to orders page
+//        assertThat("Should be redirected to orders page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/my-account/orders/"));
+//        // Find all order number links in the orders table
+//        List<WebElement> orderLinks = driver.findElements(By.cssSelector("table.woocommerce-orders-table tbody tr td.woocommerce-orders-table__cell-order-number a"));
+//
+//        // Check one of them matches the captured number (table shows “#12345”)
+//        boolean found = orderLinks.stream().map(WebElement::getText).map(txt -> txt.replace("#", "").trim()).anyMatch(txt -> txt.equals(orderNumber));
+//
+//        assertThat("The same order should appear in My Account > Orders", found, is(true));
+//        navPOM.navMyAccount();
+//
+//        navPOM.navLogout();
+//
+//
+//        System.out.println("=== Test Completed Successfully ===");
+//    }
 
-        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
-        boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
-        assertThat("login Successful", loggedIn, is(true));
-        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
-
-        NavPOM navPOM = new NavPOM(driver);
-
-        navPOM.navPageBasket();
-        List<WebElement> removeButtons = driver.findElements(By.cssSelector("a.remove"));
-        for (WebElement btn : removeButtons) {
-            btn.click();
-            // Optionally, wait a moment for the cart to update
-            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.remove"), 5);
-        }
-        WebElement emptyCartMsg = driver.findElement(By.className("cart-empty"));
-        assertThat("Cart should be empty", emptyCartMsg.getText(), containsString("Your cart is currently empty."));
-        System.out.println("=== Cart cleared successfully ===");
-
-    }
 
 }

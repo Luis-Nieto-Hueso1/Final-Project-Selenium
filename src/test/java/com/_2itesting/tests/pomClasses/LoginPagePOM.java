@@ -1,10 +1,12 @@
 package com._2itesting.tests.pomClasses;
 
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class LoginPagePOM {
     private WebDriver driver;
@@ -44,16 +46,18 @@ public class LoginPagePOM {
     public boolean login(String username, String password) {
         setUsername(username).setPassword(password);
         submitForm();
-
-        boolean loggedIn = false;
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         try {
-            driver.switchTo().alert();
-        } catch (NoAlertPresentException e) {
-            loggedIn = true;
-
+            wait.until(ExpectedConditions.and(
+                    ExpectedConditions.urlContains("/my-account/"),
+                    ExpectedConditions.visibilityOfElementLocated(By.linkText("Log out"))
+            ));
+            return true;
+        } catch (TimeoutException e) {
+            return false;
         }
-        return loggedIn;
     }
+
 
 
 }

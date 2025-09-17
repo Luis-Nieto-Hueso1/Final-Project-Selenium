@@ -22,8 +22,6 @@ public class CartPOM {
     private final WebDriverWait wait;
 
 
-
-
     public CartPOM(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -31,6 +29,7 @@ public class CartPOM {
 
 
     }
+
     @FindBy(id = "coupon_code")
     private WebElement coupon;
 
@@ -93,26 +92,37 @@ public class CartPOM {
     @FindBy(css = ".order-total .woocommerce-Price-amount")
     private WebElement orderTotalAmount;
 
-    public String getSubtotalText() { return subtotalAmount.getText(); }
-    public String getDiscountText() { return discountAmount1.getText(); }
-    public String getShippingText() { return shippingAmount.getText(); }
-    public String getTotalText()    { return orderTotalAmount.getText(); }
+    public String getSubtotalText() {
+        return subtotalAmount.getText();
+    }
+
+    public String getDiscountText() {
+        return discountAmount1.getText();
+    }
+
+    public String getShippingText() {
+        return shippingAmount.getText();
+    }
+
+    public String getTotalText() {
+        return orderTotalAmount.getText();
+    }
 
     @FindBy(css = "a.woocommerce-remove-coupon")
     private List<WebElement> removeCouponSelector;
-    @FindBy(css = "a.remove"  )
+    @FindBy(css = "a.remove")
     private List<WebElement> removeClothes;
 
 
     public void clearCart() {
-        List<WebElement> removeCoupon =  removeCouponSelector;
+        List<WebElement> removeCoupon = removeCouponSelector;
         for (WebElement btn : removeCoupon) {
             btn.click();
             // Optionally, wait a moment for the cart to update
             InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
             instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.woocommerce-remove-coupon"), 5);
         }
-        List<WebElement> removeButtons =  removeClothes;
+        List<WebElement> removeButtons = removeClothes;
         for (WebElement btn : removeButtons) {
             btn.click();
             // Optionally, wait a moment for the cart to update

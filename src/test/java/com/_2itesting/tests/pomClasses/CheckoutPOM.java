@@ -1,9 +1,12 @@
 package com._2itesting.tests.pomClasses;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.time.Duration;
 
 public class CheckoutPOM {
     private WebDriver driver;
@@ -70,10 +73,23 @@ public class CheckoutPOM {
 
     }
 
-    public void ChequePayment() {
-        chequeField.click();
+    public void selectChequeSimple() {
+        By chequeInput = By.id("payment_method_cheque");
+        By chequeLabel = By.cssSelector("li.payment_method_cheque label");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(6));
 
+        WebElement radio = driver.findElement(chequeInput);
+        if (radio.isSelected()) return; // already selected
 
+        WebElement label = wait.until(ExpectedConditions.elementToBeClickable(chequeLabel));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'})", label);
+        try {
+            label.click(); // normal click
+        } catch (ElementClickInterceptedException e) {
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", label); // simple fallback
+        }
+
+        wait.until(ExpectedConditions.elementSelectionStateToBe(chequeInput, true));
     }
     public void placeOrder() {
         placeOrderField.click();
