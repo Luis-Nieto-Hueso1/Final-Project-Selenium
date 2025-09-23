@@ -1,7 +1,9 @@
 package com._2itesting.tests.Utils;
 
 import java.math.BigDecimal;
-
+// Immutable data class to hold monetary totals
+// Factory method to create an instance from string inputs
+// Custom toString method for formatted output
 public record TotalsSnapshot(BigDecimal subtotal, BigDecimal discount, BigDecimal shipping, BigDecimal total) {
     public static TotalsSnapshot of(String subtotalText, String discountText, String shippingText, String totalText) {
         return new TotalsSnapshot(

@@ -1,0 +1,266 @@
+# E-Commerce Test Automation Framework
+
+A comprehensive Selenium WebDriver test automation framework for e-commerce testing, featuring data-driven testing, parallel execution, and robust reporting capabilities.
+
+## Overview
+
+This project automates end-to-end testing scenarios for an e-commerce website, including:
+- User authentication and login
+- Product selection and cart management
+- Discount code validation and calculation verification
+- Complete checkout process with order verification
+- Order tracking in user account
+
+## Test Cases
+
+### Test Case 1: Discount Validation
+- Login as registered user
+- Add clothing item to cart
+- Apply discount coupon codes (15% or 25%)
+- Verify discount calculations are correct
+- Validate total amounts after discount and shipping
+
+### Test Case 2: Complete Checkout Process
+- Add product to cart with discount
+- Complete checkout with billing information
+- Capture and verify order number
+- Confirm order appears in account order history
+
+## Features
+
+- **Page Object Model (POM)**: Clean separation of test logic and page elements
+- **Data-Driven Testing**: Multiple approaches including CSV files, inline data, and method sources
+- **Dynamic Testing**: JUnit 5 dynamic test generation
+- **Comprehensive Reporting**: Allure integration with screenshots and detailed logs
+- **Configuration Management**: Externalized test configuration
+- **Cross-Browser Support**: Chrome and Firefox support
+- **Robust Error Handling**: Defensive programming with proper cleanup
+
+## Project Structure
+
+```
+src/
+├── test/
+│   ├── java/
+│   │   └── com/_2itesting/tests/
+│   │       ├── basetest/
+│   │       │   └── BaseTest.java              # Base test class with setup/teardown
+│   │       ├── config/
+│   │       │   └── TestConfig.java            # Configuration management
+│   │       ├── data/
+│   │       │   ├── TestData.java              # Test data model
+│   │       │   ├── TestDataProvider.java      # Static test data provider
+│   │       │   └── CSVTestDataProvider.java   # CSV data loader
+│   │       ├── pomClasses/
+│   │       │   ├── LoginPagePOM.java          # Login page object
+│   │       │   ├── CartPOM.java               # Cart page object
+│   │       │   ├── CheckoutPOM.java           # Checkout page object
+│   │       │   ├── NavPOM.java                # Navigation elements
+│   │       │   └── CheckOrderNumberPOM.java   # Order verification
+│   │       ├── Utils/
+│   │       │   ├── Helpers.java               # Common utilities
+│   │       │   ├── Waiter.java                # WebDriver wait utilities
+│   │       │   ├── MoneyUtils.java            # Financial calculations
+│   │       │   ├── InstanceHelpers.java       # Instance management
+│   │       │   ├── TotalsSnapshot.java        # Totals data model
+│   │       │   ├── ReportUtils.java           # Logging utilities
+│   │       │   └── AllureUtils.java           # Allure reporting
+│   │       ├── TestProject.java               # Main parameterized tests
+│   │       ├── DrivenTests.java               # Advanced data-driven tests
+│   │       ├── DynamicDataDrivenTests.java    # Dynamic test generation
+│   │       └── TestProject1.java              # Single test case example
+│   └── resources/
+│       ├── test-config.properties             # Test configuration
+│       ├── test-data.csv                      # Test data file
+│       └── junit-platform.properties          # JUnit configuration
+```
+
+## Prerequisites
+
+- **Java 11+**
+- **Maven 3.6+**
+- **Chrome and/or Firefox browsers**
+- **WebDriver binaries** (managed by WebDriverManager)
+
+## Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd e-commerce-test-automation
+   ```
+
+2. **Install dependencies**
+   ```bash
+   mvn clean install
+   ```
+
+3. **Configure test properties** // under work due no enough time to implement
+   Update `src/test/resources/test-config.properties`:
+   ```properties
+   base.url=https://www.edgewordstraining.co.uk/demo-site
+   default.username=your.email@domain.com
+   default.password=yourpassword
+   ```
+
+4. **Create test account**
+   Manually register at the demo site before running tests
+
+## Running Tests
+
+### Basic Execution
+```bash
+# Run all tests
+mvn test
+
+# Run specific test class
+mvn test -Dtest=TestProject
+
+# Run with specific browser
+mvn test -Dbrowser=chrome
+mvn test -Dbrowser=firefox
+```
+
+
+# Run with custom thread count
+mvn test -DthreadCount=6
+```
+
+### Data-Driven Testing
+```bash
+# Run parameterized tests
+mvn test -Dtest=TestProject
+
+# Run CSV-driven tests
+mvn test -Dtest=DrivenTests
+
+# Run dynamic tests
+mvn test -Dtest=DynamicDataDrivenTests
+```
+
+## Test Data
+
+### Supported Discount Codes
+| Code | Discount |
+|------|----------|
+| Edgewords | 15% |
+| 2idiscount | 25% |
+
+### CSV Test Data Format
+```csv
+username,password,productName,coupon,firstName,lastName,address,address2,city,state,postcode,phone,expectedDiscountPercent
+luis.hueso@2.com,luis.hueso,Polo,2idiscount,Luis,Hueso,Edgewords,2itesting,London,Camden,SE10 9LS,07956987456,25
+```
+
+## Reporting
+
+### Allure Reports
+```bash
+# Generate Allure report
+mvn allure:report
+
+# Serve report locally
+mvn allure:serve
+```
+
+### Console Logging
+Tests provide detailed console output including:
+- Test execution steps
+- Thread information
+- Financial calculations and verifications
+- Error messages with context
+
+## Configuration Options
+
+### Browser Selection
+line options:
+# Chrome
+mvn test -Dbrowser=chrome
+
+# Firefox
+mvn test -Dbrowser=firefox
+
+# Headless mode (configure in BaseTest)
+mvn test -Dheadless=true
+```
+
+### Parallel Configuration // need to implement
+Edit `junit-platform.properties`:
+```properties
+junit.jupiter.execution.parallel.enabled=true
+junit.jupiter.execution.parallel.mode.default=concurrent
+junit.jupiter.execution.parallel.config.strategy=dynamic
+junit.jupiter.execution.parallel.config.dynamic.factor=1.0
+```
+
+## Key Classes
+
+### BaseTest
+- WebDriver lifecycle management
+- Test setup and teardown
+- Error handling and cleanup
+
+### Test Data Management
+- **TestData**: Model class for test parameters
+- **TestDataProvider**: Static data provider methods
+- **CSVTestDataProvider**: CSV file data loading
+
+### Page Objects
+- **LoginPagePOM**: Authentication functionality
+- **CartPOM**: Cart operations and discount verification
+- **CheckoutPOM**: Billing form and payment processing
+- **NavPOM**: Site navigation elements
+
+### Utilities
+- **MoneyUtils**: Financial calculations with precision
+- **Waiter**: WebDriver wait operations
+- **ReportUtils**: Test logging and reporting
+- **AllureUtils**: Screenshot and attachment management
+
+## Best Practices Implemented
+
+- **Thread-safe design**
+- **Defensive programming** with proper exception handling
+- **Clean separation** of test data, page objects, and test logic
+- **Configurable timeouts** and wait strategies
+- **Comprehensive logging** for debugging
+- **Resource cleanup** to prevent memory leaks
+- **Cross-browser compatibility**
+- **Data-driven approach** for test scalability
+
+## Troubleshooting
+
+### Common Issues
+
+**WebDriver session errors**
+- Ensure proper browser driver versions
+- Check for conflicting browser processes
+- Verify system PATH configuration
+
+
+**Element not found errors**
+- Verify CSS selectors are current
+- Check wait conditions and timeouts
+- Ensure page load completion
+
+**Test data issues**
+- Validate CSV file format and encoding
+- Check test account credentials
+- Verify discount codes are active
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Follow existing code patterns and naming conventions
+4. Add appropriate test coverage
+5. Update documentation as needed
+6. Submit a pull request
+
+## License
+
+This project is for educational and testing purposes.
+
+## Contact
+
+For questions or issues, please create a GitHub issue or contact the maintainer.
