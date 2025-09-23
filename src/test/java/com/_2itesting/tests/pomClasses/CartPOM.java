@@ -60,7 +60,7 @@ public class CartPOM {
 
 
     // Locators
-    @FindBy(css = "tr.cart-discount.coupon-2idiscount td")
+    @FindBy(css = "tr.cart-discount td")
     private WebElement discountAmount;
 
     @FindBy(css = ".order-total ")
@@ -82,7 +82,7 @@ public class CartPOM {
     private WebElement subtotalAmount;
 
     // This row is created after applying code "2idiscount"
-    @FindBy(css = "tr.cart-discount.coupon-2idiscount .woocommerce-Price-amount")
+    @FindBy(css = "tr.cart-discount td")
     private WebElement discountAmount1;
 
     // Shipping (first available rate amount)

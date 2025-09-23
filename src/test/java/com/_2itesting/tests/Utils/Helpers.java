@@ -1,6 +1,11 @@
 package com._2itesting.tests.Utils;
 
+import io.qameta.allure.Allure;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+
+import java.io.ByteArrayInputStream;
 
 /**
  * Configuration class to manage test data and URLs
@@ -21,18 +26,16 @@ public class Helpers {
     public static final String PASSWORD = "luis.hueso";
 
     // Discount codes
-    public static final String EDGEWORDS_COUPON = "Edgewords";
     public static final String TWO_I_DISCOUNT_COUPON = "2idiscount";
 
-    // Expected discount percentages
-    public static final double EDGEWORDS_DISCOUNT = 0.15; // 15%
-    public static final double TWO_I_DISCOUNT = 0.25; // 25%
 
-    // Timeouts
-    public static final int DEFAULT_TIMEOUT = 10;
-    public static final int PAGE_LOAD_TIMEOUT = 30;
 
     public static String getNoticeMessage(WebDriver driver) {
         return driver.findElement(org.openqa.selenium.By.cssSelector("div.woocommerce-message")).getText();
+    }
+
+    public static void takeScreenshot(WebDriver driver, String name) {
+        byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+        Allure.addAttachment(name, new ByteArrayInputStream(screenshot));
     }
 }

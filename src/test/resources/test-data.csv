@@ -1,0 +1,5 @@
+username,password,productName,coupon,firstName,lastName,address,address2,city,state,postcode,phone,expectedDiscountPercent
+luis.hueso@2.com,luis.hueso,Polo,2idiscount,Luis,Hueso,Edgewords,2itesting,London,Camden,SE10 9LS,07956987456,25
+luis.hueso@2.com,luis.hueso,Polo,edgewords,John,Doe,Test Street,Suite 100,Manchester,Greater Manchester,M1 1AA,07123456789,15
+luis.hueso@2.com,luis.hueso,Polo,2idiscount,Alice,Smith,123 Main St,Apt 4B,Birmingham,West Midlands,B1 1HQ,07111222333,25
+luis.hueso@2.com,luis.hueso,Polo,edgewords,Bob,Johnson,456 Oak Ave,,Leeds,West Yorkshire,LS1 1UR,07444555666,15
