@@ -1,6 +1,5 @@
 
 
-```markdown
 # E-Commerce Test Automation Framework  
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]() 
