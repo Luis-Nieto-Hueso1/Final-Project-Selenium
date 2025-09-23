@@ -1,60 +1,61 @@
-E-Commerce Test Automation Framework
 
-A comprehensive Selenium WebDriver test automation framework for e-commerce testing, featuring data-driven testing, parallel execution, and robust reporting.
 
-Overview
+```markdown
+# E-Commerce Test Automation Framework  
 
-This framework automates key end-to-end scenarios for an e-commerce demo site:
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]() 
+[![Java](https://img.shields.io/badge/java-11%2B-blue)]() 
+[![Maven](https://img.shields.io/badge/maven-3.6%2B-blueviolet)]() 
+[![Allure Report](https://img.shields.io/badge/report-Allure-orange)]()  
 
-User login and authentication
+A comprehensive **Selenium WebDriver** test automation framework for e-commerce testing, featuring **data-driven testing**, **parallel execution**, and **robust reporting**.  
 
-Product selection and cart management
+---
 
-Discount code validation and calculation
+## 🚀 Overview  
 
-Complete checkout process with billing details
+This framework automates key end-to-end scenarios for an e-commerce demo site:  
+- User login and authentication  
+- Product selection and cart management  
+- Discount code validation and calculation  
+- Complete checkout process with billing details  
+- Order tracking in user account  
 
-Order tracking in user account
+---
 
-Test Scenarios
-Test Case 1 – Discount Validation
+## ✅ Test Scenarios  
 
-Login with registered user
+### Test Case 1 – Discount Validation  
+- Login with registered user  
+- Add clothing item to cart  
+- Apply discount coupon (15% or 25%)  
+- Verify discount calculation and totals  
 
-Add clothing item to cart
+### Test Case 2 – Checkout Process  
+- Add product with discount  
+- Complete checkout with billing info  
+- Capture and verify order number  
+- Confirm order in account history  
 
-Apply discount coupon (15% or 25%)
+---
 
-Verify discount calculation and totals
+## ✨ Features  
 
-Test Case 2 – Checkout Process
+- **Page Object Model (POM)** for clean test structure  
+- **Data-Driven Testing** (CSV, inline, method sources)  
+- **JUnit 5 Dynamic Tests**  
+- **Allure Reporting** with screenshots & logs  
+- **Cross-Browser Support** (Chrome, Firefox, headless)  
+- **Parallel Execution** (JUnit 5 config)  
+- **Defensive error handling & cleanup**  
 
-Add product with discount
+---
 
-Complete checkout with billing info
+## 📂 Project Structure  
 
-Capture and verify order number
+```
 
-Confirm order in account history
-
-Features
-
-Page Object Model (POM) for clean test structure
-
-Data-Driven Testing (CSV, inline, method sources)
-
-JUnit 5 Dynamic Tests
-
-Allure Reporting with screenshots & logs
-
-Configurable Browsers (Chrome, Firefox, headless)
-
-Parallel Test Execution (JUnit 5 config)
-
-Robust error handling & cleanup
-
-Project Structure
-src/test/java/com/_2itesting/tests/
+src/test/java/com/\_2itesting/tests/
 ├── basetest/        # Setup & teardown
 ├── config/          # TestConfig
 ├── data/            # Static & CSV data providers
@@ -69,116 +70,147 @@ src/test/resources/
 ├── test-data.csv
 └── junit-platform.properties
 
-Prerequisites
+````
 
-Java 11+
+---
 
-Maven 3.6+
+## ⚙️ Prerequisites  
 
-Chrome/Firefox installed
+- **Java 11+**  
+- **Maven 3.6+**  
+- Chrome / Firefox installed  
+- WebDriver binaries (via WebDriverManager)  
 
-WebDriver binaries (via WebDriverManager)
+---
 
-Setup
+## 🛠️ Setup  
 
-Clone repo
+1. Clone repo  
+   ```bash
+   git clone <repo-url>
+   cd e-commerce-test-automation
+````
 
-git clone <repo-url>
-cd e-commerce-test-automation
+2. Install dependencies
 
+   ```bash
+   mvn clean install
+   ```
 
-Install dependencies
+3. Update config in `src/test/resources/test-config.properties`:
 
-mvn clean install
+   ```properties
+   base.url=https://www.edgewordstraining.co.uk/demo-site
+   default.username=your@email.com
+   default.password=yourpassword
+   ```
 
+4. Create a test account manually on the demo site.
 
-Update src/test/resources/test-config.properties:
+---
 
-base.url=https://www.edgewordstraining.co.uk/demo-site
-default.username=your@email.com
-default.password=yourpassword
-
-
-Create test account manually on the demo site.
-
-Running Tests
+## ▶️ Running Tests
 
 Run all tests:
 
+```bash
 mvn test
+```
 
+Run specific class:
 
-Specific test class:
-
+```bash
 mvn test -Dtest=TestProject
+```
 
+Choose browser:
 
-Browser selection:
-
+```bash
 mvn test -Dbrowser=chrome
 mvn test -Dbrowser=firefox
+```
 
+Enable parallel execution (edit `junit-platform.properties`):
 
-Parallel execution (edit junit-platform.properties):
-
+```properties
 junit.jupiter.execution.parallel.enabled=true
 junit.jupiter.execution.parallel.mode.default=concurrent
+```
 
-Reporting
+---
+
+## 📊 Reporting
 
 Generate Allure report:
 
+```bash
 mvn allure:report
-
+```
 
 Serve report locally:
 
+```bash
 mvn allure:serve
+```
 
+Failed tests automatically capture **screenshots, page source, and current URL** as Allure attachments.
 
-Attachments include screenshots, page sources, and logs on test failure.
+---
 
-Test Data
-Supported Discount Codes
-Code	Discount
-Edgewords	15%
-2idiscount	25%
-CSV Format
+## 📑 Test Data
+
+### Supported Discount Codes
+
+| Code       | Discount |
+| ---------- | -------- |
+| Edgewords  | 15%      |
+| 2idiscount | 25%      |
+
+### CSV Example
+
+```csv
 username,password,productName,coupon,firstName,lastName,address,address2,city,state,postcode,phone,expectedDiscountPercent
 luis.hueso@2.com,luis.hueso,Polo,2idiscount,Luis,Hueso,Edgewords,2itesting,London,Camden,SE10 9LS,07956987456,25
+```
 
-Best Practices Used
+---
 
-Thread-safe design
+## 🧰 Best Practices Implemented
 
-Defensive exception handling
+* Thread-safe design
+* Data / POM / logic separation
+* Configurable waits & timeouts
+* Cross-browser compatibility
+* Data-driven scalability
+* Robust cleanup & logging
 
-Clean separation of concerns (data / POM / tests)
+---
 
-Configurable waits & timeouts
+## ❗ Troubleshooting
 
-Cross-browser compatibility
+* **WebDriver session errors** → check driver versions, running browser processes, PATH.
+* **Element not found** → verify selectors, waits, and page load.
+* **Data issues** → validate CSV format, credentials, and discount codes.
 
-Data-driven for scalability
+---
 
-Troubleshooting
+## 🤝 Contributing
 
-WebDriver session errors → check driver versions, running browsers, PATH.
+1. Fork repo
+2. Create feature branch
+3. Follow existing code style
+4. Add tests & docs
+5. Submit PR
 
-Element not found → verify selectors, waits, page load.
+---
 
-Data errors → validate CSV format & credentials.
+## 📜 License
 
-Contributing
+For educational and testing purposes only.
 
-Fork repo
+```
 
-Create feature branch
+---
 
-Add tests + docs
-
-Submit PR
-
-License
-
-For educational & testing purposes.
+Would you like me to also add a **badges section that links directly to your generated Allure HTML report** (`target/allure-report/index.html`) so when someone runs the project locally, they can just click from the README?
+```
