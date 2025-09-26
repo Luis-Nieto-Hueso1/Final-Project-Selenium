@@ -7,7 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-
+// Utility class for explicit waits
 public final class Waiter {
     private final WebDriverWait wait;
 

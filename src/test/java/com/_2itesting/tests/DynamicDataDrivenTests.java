@@ -5,10 +5,7 @@ import com._2itesting.tests.Utils.*;
 import com._2itesting.tests.basetest.BaseTest;
 import com._2itesting.tests.data.TestData;
 import com._2itesting.tests.data.TestDataProvider;
-import com._2itesting.tests.pomClasses.CartPOM;
-import com._2itesting.tests.pomClasses.CheckOrderNumberPOM;
-import com._2itesting.tests.pomClasses.CheckoutPOM;
-import com._2itesting.tests.pomClasses.NavPOM;
+import com._2itesting.tests.pomClasses.*;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.openqa.selenium.By;
@@ -51,12 +48,14 @@ public class DynamicDataDrivenTests extends BaseTest {
         System.out.println("=== Starting Test Setup ===");
         CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
+        ShopPOM shopPOM = new ShopPOM(driver);
+
         waiter = new Waiter(driver, Duration.ofSeconds(10));
 
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
         // Step 2: Navigate to shop and select product
         navPOM.navPageShop();
-        navPOM.navPagePolo(); // later: navPOM.selectProductByName(productName)
+        shopPOM.navPagePolo(); // later: navPOM.selectProductByName(productName)
 
         assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("/product/polo/"));
 
@@ -119,9 +118,10 @@ public class DynamicDataDrivenTests extends BaseTest {
         waiter = new Waiter(driver, Duration.ofSeconds(10));
         CartPOM applyDiscountPOM = new CartPOM(driver);
         CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
+        ShopPOM shopPOM = new ShopPOM(driver);
 
         navPOM.navPageShop();
-        navPOM.navPagePolo();
+        shopPOM.navPagePolo();
 
         // Verify navigation to Polo product page
         assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/product/polo/"));

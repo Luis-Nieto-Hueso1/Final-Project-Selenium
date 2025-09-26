@@ -206,8 +206,8 @@ public class DrivenTests extends BaseTest {
     private void selectProductByName(String productName) {
         switch (productName.toLowerCase()) {
             case "polo":
-                NavPOM navPOM = new NavPOM(driver);
-                navPOM.navPagePolo();
+                ShopPOM shopPOM = new ShopPOM(driver);
+                shopPOM.navPagePolo();
                 break;
             // Add more products as needed
             case "hoodie":

@@ -32,8 +32,9 @@ public class BaseTest {
 
     @BeforeEach
     public void setUp() {
-        driver = new ChromeDriver();
-        //driver = new FirefoxDriver();
+
+        //driver = new ChromeDriver();
+        driver = new FirefoxDriver();
         driver.manage().window().maximize();
         waiter = new Waiter(driver, Duration.ofSeconds(10));
 
@@ -86,8 +87,6 @@ public class BaseTest {
         if (driver == null) return;
 
         try {
-            // Optional: clear cookies if the session is still alive
-            try { driver.manage().deleteAllCookies(); } catch (Exception ignored) {}
 
             // Only quit if the session is still valid
             if (driver instanceof RemoteWebDriver) {

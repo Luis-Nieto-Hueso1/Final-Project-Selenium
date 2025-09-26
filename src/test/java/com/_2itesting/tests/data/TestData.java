@@ -1,5 +1,5 @@
 package com._2itesting.tests.data;
-
+// Data class to hold test parameters
 public class TestData {
     private String username;
     private String password;

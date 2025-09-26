@@ -29,7 +29,8 @@ public class TestProject1 extends BaseTest {
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
         // Step 2: Navigate to shop and select product
         navPOM.navPageShop();
-        navPOM.navPagePolo(); // later: navPOM.selectProductByName(productName)
+        ShopPOM shopPOM = new ShopPOM(driver);
+        shopPOM.navPagePolo();// later: navPOM.selectProductByName(productName)
 
         assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("/product/polo/"));
 
@@ -96,8 +97,9 @@ public class TestProject1 extends BaseTest {
         CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
 
         navPOM.navPageShop();
-        navPOM.navPagePolo();
 
+        ShopPOM shopPOM = new ShopPOM(driver);
+        shopPOM.navPagePolo();
         // Verify navigation to Polo product page
         assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/product/polo/"));
         // Add product to cart

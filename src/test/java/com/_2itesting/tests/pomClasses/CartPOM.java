@@ -21,7 +21,6 @@ public class CartPOM {
     private WebDriver driver;
     private final WebDriverWait wait;
 
-
     public CartPOM(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -29,6 +28,31 @@ public class CartPOM {
 
 
     }
+    // Locators
+    @FindBy(css = "tr.cart-discount td")
+    private WebElement discountAmount;
+
+    @FindBy(css = ".order-total ")
+    private WebElement totalElement;
+
+    // Cart lines
+    @FindBy(css = ".cart-subtotal .woocommerce-Price-amount")
+    private WebElement subtotalAmount;
+
+    // This row is created after applying code "2idiscount"
+    @FindBy(css = "tr.cart-discount td")
+    private WebElement discountAmount1;
+
+    // Shipping (first available rate amount)
+    @FindBy(css = "tr.shipping .woocommerce-Price-amount")
+    private WebElement shippingAmount;
+
+    @FindBy(css = ".order-total .woocommerce-Price-amount")
+    private WebElement orderTotalAmount;
+    @FindBy(css = "a.woocommerce-remove-coupon")
+    private List<WebElement> removeCouponSelector;
+    @FindBy(css = "a.remove")
+    private List<WebElement> removeClothes;
 
     @FindBy(id = "coupon_code")
     private WebElement coupon;
@@ -58,16 +82,9 @@ public class CartPOM {
         return actualMessage.contains(expectedMessage);
     }
 
-
-    // Locators
-    @FindBy(css = "tr.cart-discount td")
-    private WebElement discountAmount;
-
-    @FindBy(css = ".order-total ")
-    private WebElement totalElement;
-
     // Service Methods
     public String getDiscountAmount() {
+
         return discountAmount.getText();
     }
 
@@ -77,42 +94,25 @@ public class CartPOM {
 
     }
 
-    // Cart lines
-    @FindBy(css = ".cart-subtotal .woocommerce-Price-amount")
-    private WebElement subtotalAmount;
-
-    // This row is created after applying code "2idiscount"
-    @FindBy(css = "tr.cart-discount td")
-    private WebElement discountAmount1;
-
-    // Shipping (first available rate amount)
-    @FindBy(css = "tr.shipping .woocommerce-Price-amount")
-    private WebElement shippingAmount;
-
-    @FindBy(css = ".order-total .woocommerce-Price-amount")
-    private WebElement orderTotalAmount;
-
     public String getSubtotalText() {
+
         return subtotalAmount.getText();
     }
 
     public String getDiscountText() {
+
         return discountAmount1.getText();
     }
 
     public String getShippingText() {
+
         return shippingAmount.getText();
     }
 
     public String getTotalText() {
+
         return orderTotalAmount.getText();
     }
-
-    @FindBy(css = "a.woocommerce-remove-coupon")
-    private List<WebElement> removeCouponSelector;
-    @FindBy(css = "a.remove")
-    private List<WebElement> removeClothes;
-
 
     public void clearCart() {
         List<WebElement> removeCoupon = removeCouponSelector;

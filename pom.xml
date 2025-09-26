@@ -88,6 +88,7 @@
                     <systemProperties>
                         <!--suppress UnresolvedMavenProperty -->
                         <browser> ${browser}</browser>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                         <property>
                             <name>allure.results.directory</name>
                             <value>${project.build.directory}/allure-results</value>

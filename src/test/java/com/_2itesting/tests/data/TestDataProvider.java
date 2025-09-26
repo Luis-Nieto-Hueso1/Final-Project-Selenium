@@ -2,7 +2,7 @@ package com._2itesting.tests.data;
 
 import java.util.List;
 import java.util.ArrayList;
-
+// Utility class to provide test data for different scenarios
 public class TestDataProvider {
 
     public static List<TestData> getDiscountTestData() {

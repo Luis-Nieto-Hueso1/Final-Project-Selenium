@@ -2,7 +2,7 @@ package com._2itesting.tests.data;
 
 import java.io.*;
 import java.util.*;
-
+// Utility class to load test data from a CSV file
 public class CSVTestDataProvider {
 
     public static List<TestData> loadTestDataFromCSV(String filePath) {

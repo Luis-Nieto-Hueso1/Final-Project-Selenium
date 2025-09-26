@@ -45,12 +45,14 @@ public class NavPOM {
     }
 
     public void navAddCart() {
+
         addCartField.click();
     }
 
-    public void navPagePolo() {
-        poloField.click();
-    }
+//    public void navPagePolo() {
+//
+//        poloField.click();
+//    }
 
     public void navMyAccount() {
         myAccountField.click();

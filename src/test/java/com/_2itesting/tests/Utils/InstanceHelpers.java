@@ -27,7 +27,7 @@ public class InstanceHelpers {
         Actions myActionChain = new Actions(driver);
         int stepSize = movX/smooth;
         myActionChain.moveToElement(elm)
-                .clickAndHold(); //I FORGOT TO ACTUALLY CLICK THE LEFT MOUSE BUTTON...x_x
+                .clickAndHold(); // hold down the mouse button
         for (int i=0; i<smooth; i++){
             myActionChain.moveByOffset(stepSize,0);
 
