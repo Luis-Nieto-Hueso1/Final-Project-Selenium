@@ -9,6 +9,8 @@ import com._2itesting.tests.pomClasses.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
@@ -18,7 +20,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class TestProject extends BaseTest {
+public class TestProjectDataDrivenTest extends BaseTest {
 
     // Method to provide test data for discount tests
     static Stream<TestData> discountTestData() {
@@ -86,8 +88,13 @@ public class TestProject extends BaseTest {
         assertThat("Discount should be " + testData.getExpectedDiscountPercent() + "% of subtotal (±1p)",
                 discountDiff.compareTo(penny) <= 0);
 
-        // Navigate to account and logout
-        driver.get(Helpers.ACCOUNT_URL);
+        try {
+            waiter.clickable(By.linkText("My account")).click();
+        } catch (TimeoutException | NoSuchElementException e) {
+            System.out.println("My account link not found or clickable, going directly to URL...");
+            driver.get(Helpers.ACCOUNT_URL);
+        }
+
         waiter.clickable(By.linkText("Log out"));
         navPOM.navLogout();
 

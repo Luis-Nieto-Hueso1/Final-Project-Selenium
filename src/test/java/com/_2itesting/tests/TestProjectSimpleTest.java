@@ -5,6 +5,8 @@ import com._2itesting.tests.basetest.BaseTest;
 import com._2itesting.tests.pomClasses.*;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 
 
@@ -14,7 +16,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class TestProject1 extends BaseTest {
+public class TestProjectSimpleTest extends BaseTest {
 
 
     @Test
@@ -73,12 +75,13 @@ public class TestProject1 extends BaseTest {
 
 
         instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 1000, 1);
+        try {
+            waiter.clickable(By.linkText("My account")).click();
+        } catch (TimeoutException | NoSuchElementException e) {
+            System.out.println("My account link not found or clickable, going directly to URL...");
+            driver.get(Helpers.ACCOUNT_URL);
+        }
 
-        waiter.clickable(By.linkText("My account"));
-//        navPOM.navMyAccount();
-
-        driver.get(Helpers.ACCOUNT_URL);
-//
         // Verify navigation to account page
         waiter.clickable(By.linkText("Log out"));
         navPOM.navLogout();

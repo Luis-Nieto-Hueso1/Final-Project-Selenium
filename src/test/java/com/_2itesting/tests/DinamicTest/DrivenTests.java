@@ -1,5 +1,5 @@
 // Advanced Data-Driven Test Examples
-package com._2itesting.tests;
+package com._2itesting.tests.DinamicTest;
 
 import com._2itesting.tests.Utils.*;
 import com._2itesting.tests.basetest.BaseTest;

@@ -13,6 +13,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -33,8 +34,22 @@ public class BaseTest {
     @BeforeEach
     public void setUp() {
 
-        //driver = new ChromeDriver();
-        driver = new FirefoxDriver();
+        String browser = System.getProperty("browser", "chrome").toLowerCase();
+
+        switch (browser) {
+            case "firefox":
+                driver = new FirefoxDriver();
+                break;
+            case "edge":
+                driver = new EdgeDriver();
+                break;
+            case "chrome":
+            default:
+                driver = new ChromeDriver();
+                break;
+        }
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
         waiter = new Waiter(driver, Duration.ofSeconds(10));
 
