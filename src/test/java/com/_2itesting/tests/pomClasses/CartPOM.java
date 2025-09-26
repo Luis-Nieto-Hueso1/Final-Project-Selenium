@@ -1,11 +1,7 @@
 package com._2itesting.tests.pomClasses;
 
 import com._2itesting.tests.Utils.Helpers;
-import com._2itesting.tests.Utils.InstanceHelpers;
-import net.bytebuddy.utility.dispatcher.JavaDispatcher;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
@@ -13,7 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -59,6 +54,10 @@ public class CartPOM {
 
     @FindBy(name = "apply_coupon")
     private WebElement applyCouponButton;
+    // Do NOT cache lists via @FindBy. Use By locators and re-find every loop.
+    private final By itemRemove = By.cssSelector("tr.cart_item a.remove");
+    private final By couponRemove = By.cssSelector("a.woocommerce-remove-coupon");
+    private final By wooOverlay = By.cssSelector(".blockUI, .blockOverlay"); // WooCommerce ajax overlay
 
 
     public void applyCoupon(String discount) {
@@ -114,22 +113,66 @@ public class CartPOM {
         return orderTotalAmount.getText();
     }
 
+
+
     public void clearCart() {
-        List<WebElement> removeCoupon = removeCouponSelector;
-        for (WebElement btn : removeCoupon) {
-            btn.click();
-            // Optionally, wait a moment for the cart to update
-            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.woocommerce-remove-coupon"), 5);
-        }
-        List<WebElement> removeButtons = removeClothes;
-        for (WebElement btn : removeButtons) {
-            btn.click();
-            // Optionally, wait a moment for the cart to update
-            InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
-            instanceHelpers.waitForElementToBeClickableHelper(By.cssSelector("a.remove"), 5);
+        driver.switchTo().defaultContent(); // harmless if no frames; useful if you were in one
+        removeAll(couponRemove, By.xpath("./ancestor::div[contains(@class,'coupon')]")); // fallback parent
+        removeAll(itemRemove,   By.xpath("./ancestor::tr[contains(@class,'cart_item')]"));
+    }
+
+    private void removeAll(By clickLocator, By parentRowLocator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+
+        int guard = 200; // safety to avoid infinite loops
+        while (guard-- > 0) {
+            // re-query each pass
+            List<WebElement> buttons = driver.findElements(clickLocator);
+            if (buttons.isEmpty()) break;
+
+            int before = buttons.size();
+
+            // get a FRESH element each time
+            WebElement removeBtn = wait.until(ExpectedConditions.elementToBeClickable(clickLocator));
+
+            // resolve a stable parent to wait on (row/container that disappears/changes)
+            WebElement parent;
+            try {
+                parent = removeBtn.findElement(parentRowLocator);
+            } catch (NoSuchElementException e) {
+                parent = removeBtn; // fallback if no obvious parent
+            }
+
+            // robust click with retry
+            clickRobust(clickLocator, removeBtn);
+
+            // WooCommerce shows an ajax overlay; wait for it to clear if present
+            waitForOverlayToClear(wait);
+
+            // now wait until the parent goes stale and count drops
+            wait.until(ExpectedConditions.stalenessOf(parent));
+            wait.until(d -> d.findElements(clickLocator).size() < before);
         }
     }
 
+    private void clickRobust(By locator, WebElement el) {
+        try {
+            el.click();
+        } catch (StaleElementReferenceException | ElementClickInterceptedException e) {
+            // re-find and JS-click as a fallback
+            WebElement fresh = driver.findElement(locator);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", fresh);
+        }
+    }
 
-}
+    private void waitForOverlayToClear(WebDriverWait wait) {
+        try {
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(wooOverlay));
+        } catch (TimeoutException ignored) {
+        // sometimes overlay doesn't appear; ignore timeout
+        }
+    }
+
+    }
+
+

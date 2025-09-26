@@ -1,32 +1,42 @@
-// src/test/java/util/AllureUtils.java
 package com._2itesting.tests.Utils;
 
 import io.qameta.allure.Allure;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import io.qameta.allure.Attachment;
+import org.openqa.selenium.*;
 
 import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public final class AllureUtils {
     private AllureUtils() {}
 
-    public static void attachScreenshot(WebDriver driver, String name) {
-        if (driver == null) return;
-        byte[] bytes = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-        Allure.addAttachment(name, new ByteArrayInputStream(bytes));
+    @Attachment(value = "{name}", type = "image/png")
+    public static byte[] attachScreenshot(WebDriver driver, String name) {
+        if (!(driver instanceof TakesScreenshot ts)) {
+            return ("Driver does not support screenshots").getBytes();
+        }
+        return ts.getScreenshotAs(OutputType.BYTES); // Allure embeds this as an image
     }
 
-    public static void attachPageSource(WebDriver driver, String name) {
-        if (driver == null) return;
-        String html = driver.getPageSource();
-        Allure.addAttachment(name + " (HTML)", "text/html",
-                new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)), ".html");
+    @Attachment(value = "{name} (HTML)", type = "text/html", fileExtension = ".html")
+    public static byte[] attachPageSource(WebDriver driver, String name) {
+        if (driver == null) return "No driver".getBytes();
+        return driver.getPageSource().getBytes(java.nio.charset.StandardCharsets.UTF_8);
     }
 
-    public static void attachUrl(WebDriver driver) {
-        if (driver == null) return;
-        Allure.addAttachment("Current URL", driver.getCurrentUrl());
+    @Attachment(value = "Current URL", type = "text/plain")
+    public static String attachUrl(WebDriver driver) {
+        return driver == null ? "No driver" : driver.getCurrentUrl();
+    }
+
+
+    public static void attachAllOnFailure(WebDriver driver) {
+        attachScreenshot(driver, "Failure screenshot");
+        attachPageSource(driver, "Failure page source");
+        attachUrl(driver);
     }
 }

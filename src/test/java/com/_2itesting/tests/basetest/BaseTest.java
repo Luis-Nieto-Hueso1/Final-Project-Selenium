@@ -87,12 +87,14 @@ public class BaseTest {
                 AllureUtils.attachUrl(driver);
                 AllureUtils.attachScreenshot(driver, name);
                 AllureUtils.attachPageSource(driver, name);
+
             }
         }
 
         @Override
         public void testSuccessful(ExtensionContext context) {
-            // no-op; keep reports light. If you want success screenshots, add here.
+            // no-op; keep reports light. If you want success screenshots, add here.#
+
         }
     };
 

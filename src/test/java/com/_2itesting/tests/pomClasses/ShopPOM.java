@@ -18,10 +18,16 @@ public class ShopPOM {
     @FindBy(css = "li.product:nth-child(9) > a:nth-child(1) > img:nth-child(1)")
     public WebElement poloField;
 
+    @FindBy(css = " a.button.product_type_simple.add_to_cart_button.ajax_add_to_cart.added")
+    public WebElement beanieField;
 
     public void navPagePolo() {
 
         poloField.click();
+    }
+    public void navPageBeanie() {
+
+        beanieField.click();
     }
 
 }
