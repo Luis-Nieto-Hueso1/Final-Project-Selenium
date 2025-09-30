@@ -10,7 +10,7 @@ public class TestDataProvider {
 
         // Test Case 1: 25% discount with Polo shirt
         testDataList.add(new TestData(
-                "luis.hueso@2.com", "luis.hueso", "Polo", "2idiscount",
+                "luis.hueso@2.com", "luis.hueso", "Sunglasses", "2idiscount",
                 "Luis", "Hueso", "Edgewords", "2itesting",
                 "London", "Camden", "SE10 9LS", "07956987456", 25
         ));
@@ -37,7 +37,7 @@ public class TestDataProvider {
 
         // Checkout Test Case 2
         testDataList.add(new TestData(
-                "luis.hueso@2.com", "luis.hueso", "Polo", "Edgewords",
+                "luis.hueso@2.com", "luis.hueso", "Sunglasses", "Edgewords",
                 "Bob", "Johnson", "456 Oak Ave", "",
                 "Leeds", "West Yorkshire", "LS1 1UR", "07444555666", 15
         ));

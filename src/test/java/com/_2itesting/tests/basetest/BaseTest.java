@@ -51,7 +51,7 @@ public class BaseTest {
 
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
-        waiter = new Waiter(driver, Duration.ofSeconds(10));
+        waiter = new Waiter(driver, Duration.ofSeconds(5));
 
         System.out.println("=== Starting Test Setup ===");
         driver.get(Helpers.LOGIN_URL);

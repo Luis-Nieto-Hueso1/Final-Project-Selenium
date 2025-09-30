@@ -116,60 +116,29 @@ public class CartPOM {
 
 
     public void clearCart() {
-        driver.switchTo().defaultContent(); // harmless if no frames; useful if you were in one
-        removeAll(couponRemove, By.xpath("./ancestor::div[contains(@class,'coupon')]")); // fallback parent
-        removeAll(itemRemove,   By.xpath("./ancestor::tr[contains(@class,'cart_item')]"));
+        driver.switchTo().defaultContent();
+        removeAll(By.cssSelector("a.woocommerce-remove-coupon")); // coupon remove links
+        removeAll(By.cssSelector("a.remove"));                     // cart line-item remove links
     }
 
-    private void removeAll(By clickLocator, By parentRowLocator) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+    private void removeAll(By clickLocator) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
+        int guard = 100; // safety
 
-        int guard = 200; // safety to avoid infinite loops
         while (guard-- > 0) {
-            // re-query each pass
-            List<WebElement> buttons = driver.findElements(clickLocator);
-            if (buttons.isEmpty()) break;
+            List<WebElement> links = driver.findElements(clickLocator);
+            if (links.isEmpty()) return;
 
-            int before = buttons.size();
+            int before = links.size();
+            WebElement link = wait.until(ExpectedConditions.elementToBeClickable(links.get(0)));
+            link.click();
 
-            // get a FRESH element each time
-            WebElement removeBtn = wait.until(ExpectedConditions.elementToBeClickable(clickLocator));
-
-            // resolve a stable parent to wait on (row/container that disappears/changes)
-            WebElement parent;
-            try {
-                parent = removeBtn.findElement(parentRowLocator);
-            } catch (NoSuchElementException e) {
-                parent = removeBtn; // fallback if no obvious parent
-            }
-
-            // robust click with retry
-            clickRobust(clickLocator, removeBtn);
-
-            // WooCommerce shows an ajax overlay; wait for it to clear if present
-            waitForOverlayToClear(wait);
-
-            // now wait until the parent goes stale and count drops
-            wait.until(ExpectedConditions.stalenessOf(parent));
-            wait.until(d -> d.findElements(clickLocator).size() < before);
-        }
-    }
-
-    private void clickRobust(By locator, WebElement el) {
-        try {
-            el.click();
-        } catch (StaleElementReferenceException | ElementClickInterceptedException e) {
-            // re-find and JS-click as a fallback
-            WebElement fresh = driver.findElement(locator);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", fresh);
-        }
-    }
-
-    private void waitForOverlayToClear(WebDriverWait wait) {
-        try {
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(wooOverlay));
-        } catch (TimeoutException ignored) {
-        // sometimes overlay doesn't appear; ignore timeout
+            // WooCommerce updates via AJAX. Wait for either the clicked element to go stale
+            // or the number of matching links to drop. This avoids chasing parent rows.
+            wait.until(ExpectedConditions.or(
+                    ExpectedConditions.stalenessOf(link),
+                    ExpectedConditions.numberOfElementsToBeLessThan(clickLocator, before)
+            ));
         }
     }
 

@@ -186,14 +186,7 @@ public class TestProjectDataDrivenTest extends BaseTest {
 
     // Helper method to select product by name dynamically
     private void selectProductByName(String productName) {
-        switch (productName.toLowerCase()) {
-            case "polo":
-                ShopPOM shopPOM = new ShopPOM(driver);
-                shopPOM.navPagePolo();
-                break;
-            // Add more products as needed
-            default:
-                throw new IllegalArgumentException("Product not supported: " + productName);
+        ShopPOM shopPOM = new ShopPOM(driver);
+        shopPOM.selectProduct(productName);  // Uses the dynamic method
         }
-    }
 }

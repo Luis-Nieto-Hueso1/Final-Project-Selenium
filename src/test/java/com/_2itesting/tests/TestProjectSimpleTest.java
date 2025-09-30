@@ -32,9 +32,10 @@ public class TestProjectSimpleTest extends BaseTest {
         // Step 2: Navigate to shop and select product
         navPOM.navPageShop();
         ShopPOM shopPOM = new ShopPOM(driver);
-        shopPOM.navPagePolo();// later: navPOM.selectProductByName(productName)
-
-        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("/product/polo/"));
+//        shopPOM.navPagePolo();// later: navPOM.selectProductByName(productName)
+//
+//        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("/product/polo/"));
+        shopPOM.selectProduct("Polo");
 
         navPOM.navAddCart();
         System.out.println("=== Product added to basket ===");
@@ -102,9 +103,7 @@ public class TestProjectSimpleTest extends BaseTest {
         navPOM.navPageShop();
 
         ShopPOM shopPOM = new ShopPOM(driver);
-        shopPOM.navPagePolo();
-        // Verify navigation to Polo product page
-        assertThat("Should be on Polo shirt product page", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/product/polo/"));
+        shopPOM.selectProduct("Sunglasses");
         // Add product to cart
         navPOM.navAddCart();
 

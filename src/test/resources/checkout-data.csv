@@ -1,4 +1,4 @@
 username,password,productName,coupon,firstName,lastName,address,address2,city,state,postcode,phone,expectedDiscountPercent
-luis.hueso@2.com,luis.hueso,Polo,2idiscount,Test,User1,100 High St,Floor 2,London,Greater London,E1 6AN,07700900123,25
+luis.hueso@2.com,luis.hueso,Sunglasses,2idiscount,Test,User1,100 High St,Floor 2,London,Greater London,E1 6AN,07700900123,25
 luis.hueso@2.com,luis.hueso,Polo,edgewords,Test,User2,200 King St,Unit 5,Bristol,Bristol,BS1 4DJ,07700900456,15
 luis.hueso@2.com,luis.hueso,Polo,2idiscount,Test,User3,300 Queen St,,Edinburgh,Edinburgh,EH1 3AA,07700900789,25

@@ -1,9 +1,12 @@
 package com._2itesting.tests.pomClasses;
 
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.WebDriver;
+
+import java.util.List;
 
 
 public class ShopPOM {
@@ -14,20 +17,23 @@ public class ShopPOM {
         PageFactory.initElements(driver, this);
 
     }
+    @FindBy(css = "h2.woocommerce-loop-product__title")
+    private List<WebElement> productTitles;
+    public WebElement getProductByName(String productName) {
+        return productTitles.stream()
+                .filter(title -> title.getText().trim().equals(productName))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(productName + " product not found"));
+    }
 
+    public void selectProduct(String productName) {
+        getProductByName(productName).click();
+    }
     @FindBy(css = "li.product:nth-child(9) > a:nth-child(1) > img:nth-child(1)")
     public WebElement poloField;
 
-    @FindBy(css = " a.button.product_type_simple.add_to_cart_button.ajax_add_to_cart.added")
-    public WebElement beanieField;
-
     public void navPagePolo() {
-
         poloField.click();
-    }
-    public void navPageBeanie() {
-
-        beanieField.click();
     }
 
 }
