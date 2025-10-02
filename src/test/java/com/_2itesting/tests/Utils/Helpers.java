@@ -28,14 +28,4 @@ public class Helpers {
     // Discount codes
     public static final String TWO_I_DISCOUNT_COUPON = "2idiscount";
 
-
-
-    public static String getNoticeMessage(WebDriver driver) {
-        return driver.findElement(org.openqa.selenium.By.cssSelector("div.woocommerce-message")).getText();
-    }
-
-    public static void takeScreenshot(WebDriver driver, String name) {
-        byte[] screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-        Allure.addAttachment(name, new ByteArrayInputStream(screenshot));
-    }
 }

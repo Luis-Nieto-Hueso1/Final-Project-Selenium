@@ -8,10 +8,7 @@ import com._2itesting.tests.data.TestDataProvider;
 import com._2itesting.tests.pomClasses.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import java.time.Duration;
 import java.util.List;
@@ -54,10 +51,10 @@ public class TestProjectDataDrivenTest extends BaseTest {
 
         assertThat("Should be on product page", driver.getCurrentUrl(),
                 containsString("/product/" + testData.getProductName().toLowerCase()));
-
+        // Add product to cart
         navPOM.navAddCart();
         System.out.println("=== Product added to basket ===");
-
+// Go to cart
         waiter.clickable(By.linkText("View cart"));
         navPOM.navPageBasket();
         assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("/cart/"));
@@ -88,12 +85,12 @@ public class TestProjectDataDrivenTest extends BaseTest {
         assertThat("Discount should be " + testData.getExpectedDiscountPercent() + "% of subtotal (±1p)",
                 discountDiff.compareTo(penny) <= 0);
 
-        try {
-            waiter.clickable(By.linkText("My account")).click();
-        } catch (TimeoutException | NoSuchElementException e) {
-            System.out.println("My account link not found or clickable, going directly to URL...");
-            driver.get(Helpers.ACCOUNT_URL);
-        }
+        instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 1000, 1);
+        WebElement link = driver.findElement(By.linkText("My account"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", link);
+//        link.click();
+        navPOM.navMyAccount();
+
 
         waiter.clickable(By.linkText("Log out"));
         navPOM.navLogout();

@@ -4,10 +4,7 @@ import com._2itesting.tests.Utils.*;
 import com._2itesting.tests.basetest.BaseTest;
 import com._2itesting.tests.pomClasses.*;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 
 import java.time.Duration;
@@ -76,12 +73,12 @@ public class TestProjectSimpleTest extends BaseTest {
 
 
         instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 1000, 1);
-        try {
-            waiter.clickable(By.linkText("My account")).click();
-        } catch (TimeoutException | NoSuchElementException e) {
-            System.out.println("My account link not found or clickable, going directly to URL...");
-            driver.get(Helpers.ACCOUNT_URL);
-        }
+        WebElement link = driver.findElement(By.linkText("My account"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", link);
+//        link.click();
+        navPOM.navMyAccount();
+
+
 
         // Verify navigation to account page
         waiter.clickable(By.linkText("Log out"));

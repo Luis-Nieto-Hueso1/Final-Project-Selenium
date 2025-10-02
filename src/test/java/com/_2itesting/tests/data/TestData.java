@@ -1,4 +1,5 @@
 package com._2itesting.tests.data;
+
 // Data class to hold test parameters
 public class TestData {
     private String username;
@@ -35,20 +36,71 @@ public class TestData {
     }
 
     // Getters
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
-    public String getProductName() { return productName; }
-    public String getCoupon() { return coupon; }
-    public String getFirstName() { return firstName; }
-    public String getLastName() { return lastName; }
-    public String getAddress() { return address; }
-    public String getAddress2() { return address2; }
-    public String getCity() { return city; }
-    public String getState() { return state; }
-    public String getPostcode() { return postcode; }
-    public String getPhone() { return phone; }
-    public int getExpectedDiscountPercent() { return expectedDiscountPercent; }
+    public String getUsername() {
+        return username;
+    }
 
+    // New getter for password
+    public String getPassword() {
+        return password;
+    }
+
+    // New getter for productName
+    public String getProductName() {
+        return productName;
+    }
+
+    // New getter for coupon
+    public String getCoupon() {
+        return coupon;
+    }
+
+    // New getter for firstName
+    public String getFirstName() {
+        return firstName;
+    }
+
+    // New getter for lastName
+    public String getLastName() {
+        return lastName;
+    }
+
+    // New getter for address
+    public String getAddress() {
+        return address;
+    }
+
+    // New getter for address2
+    public String getAddress2() {
+        return address2;
+    }
+
+    // New getter for city
+    public String getCity() {
+        return city;
+    }
+
+    // New getter for state
+    public String getState() {
+        return state;
+    }
+
+    // New getter for postcode
+    public String getPostcode() {
+        return postcode;
+    }
+
+    // New getter for phone
+    public String getPhone() {
+        return phone;
+    }
+
+    // New getter for expected discount percentage
+    public int getExpectedDiscountPercent() {
+        return expectedDiscountPercent;
+    }
+
+    // For easier logging and debugging
     @Override
     public String toString() {
         return String.format("TestData{username='%s', product='%s', coupon='%s', discount=%d%%}",

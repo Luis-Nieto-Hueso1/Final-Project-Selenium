@@ -22,13 +22,10 @@ public class NavPOM {
     public WebElement checkoutField;
     @FindBy(name = "add-to-cart")
     public WebElement addCartField;
-    @FindBy(css = "li.product:nth-child(9) > a:nth-child(1) > img:nth-child(1)")
-    public WebElement poloField;
     @FindBy(linkText = "My account")
     public WebElement myAccountField;
     @FindBy(linkText = "Log out")
     public WebElement logoutButton;
-
 
 
     public void navPageShop() {
@@ -37,7 +34,6 @@ public class NavPOM {
 
     public void navPageBasket() {
         basketField.click();
-
     }
 
     public void navCheckout() {
@@ -49,18 +45,13 @@ public class NavPOM {
         addCartField.click();
     }
 
-//    public void navPagePolo() {
-//
-//        poloField.click();
-//    }
-
     public void navMyAccount() {
         myAccountField.click();
     }
+
     public void navLogout() {
         logoutButton.click();
     }
-
 
 
 }

@@ -90,12 +90,6 @@ public class BaseTest {
 
             }
         }
-
-        @Override
-        public void testSuccessful(ExtensionContext context) {
-            // no-op; keep reports light. If you want success screenshots, add here.#
-
-        }
     };
 
 
@@ -124,4 +118,3 @@ public class BaseTest {
         } }}
 
 
-//        }

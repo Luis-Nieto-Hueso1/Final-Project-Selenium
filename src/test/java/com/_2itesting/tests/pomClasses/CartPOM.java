@@ -1,6 +1,5 @@
 package com._2itesting.tests.pomClasses;
 
-import com._2itesting.tests.Utils.Helpers;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
@@ -10,12 +9,13 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.NoSuchElementException;
 
+// Page Object Model class for the cart page
 public class CartPOM {
     private WebDriver driver;
     private final WebDriverWait wait;
 
+    // Constructor
     public CartPOM(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
@@ -23,125 +23,92 @@ public class CartPOM {
 
 
     }
-    // Locators
-    @FindBy(css = "tr.cart-discount td")
-    private WebElement discountAmount;
-
-    @FindBy(css = ".order-total ")
-    private WebElement totalElement;
 
     // Cart lines
     @FindBy(css = ".cart-subtotal .woocommerce-Price-amount")
     private WebElement subtotalAmount;
-
     // This row is created after applying code "2idiscount"
     @FindBy(css = "tr.cart-discount td")
-    private WebElement discountAmount1;
-
+    private WebElement discountAmount;
     // Shipping (first available rate amount)
     @FindBy(css = "tr.shipping .woocommerce-Price-amount")
     private WebElement shippingAmount;
-
+    // Order Total
     @FindBy(css = ".order-total .woocommerce-Price-amount")
     private WebElement orderTotalAmount;
-    @FindBy(css = "a.woocommerce-remove-coupon")
-    private List<WebElement> removeCouponSelector;
-    @FindBy(css = "a.remove")
-    private List<WebElement> removeClothes;
-
+    // Coupon code field and button
     @FindBy(id = "coupon_code")
     private WebElement coupon;
-
+    // Button to apply coupon
     @FindBy(name = "apply_coupon")
     private WebElement applyCouponButton;
-    // Do NOT cache lists via @FindBy. Use By locators and re-find every loop.
-    private final By itemRemove = By.cssSelector("tr.cart_item a.remove");
-    private final By couponRemove = By.cssSelector("a.woocommerce-remove-coupon");
-    private final By wooOverlay = By.cssSelector(".blockUI, .blockOverlay"); // WooCommerce ajax overlay
 
-
+    // Apply a coupon code by entering it in the field
     public void applyCoupon(String discount) {
         coupon.clear();              // optional: clears existing text
         coupon.sendKeys(discount);
     }
 
+    // Click the "Apply coupon" button
     public void clickApplyCoupon() {
         applyCouponButton.click();
     }
 
-    // (Optional) combine into one convenience method
+    // Apply a discount code by entering it and clicking the button
     public void applyDiscountCode(String code) {
         applyCoupon(code);
         clickApplyCoupon();
     }
 
-    public Boolean isCouponAppliedMessageDisplayed() {
-        String expectedMessage = "Coupon code applied successfully.";
-        String actualMessage = Helpers.getNoticeMessage(driver);
-        return actualMessage.contains(expectedMessage);
-    }
-
-    // Service Methods
-    public String getDiscountAmount() {
-
-        return discountAmount.getText();
-    }
-
-    public String getTotalAmount() {
-        return totalElement.getText();
-
-
-    }
-
+    // Subtotal text (right column, top row)
     public String getSubtotalText() {
 
         return subtotalAmount.getText();
     }
 
+    // Discount text (right column, middle row)
     public String getDiscountText() {
 
-        return discountAmount1.getText();
+        return discountAmount.getText();
     }
 
+    // Shipping text (right column, middle row)
     public String getShippingText() {
 
         return shippingAmount.getText();
     }
 
+    // Total text (right column, bottom row)
     public String getTotalText() {
 
         return orderTotalAmount.getText();
     }
 
-
-
     public void clearCart() {
-        driver.switchTo().defaultContent();
-        removeAll(By.cssSelector("a.woocommerce-remove-coupon")); // coupon remove links
-        removeAll(By.cssSelector("a.remove"));                     // cart line-item remove links
-    }
-
-    private void removeAll(By clickLocator) {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(3));
-        int guard = 100; // safety
-
-        while (guard-- > 0) {
-            List<WebElement> links = driver.findElements(clickLocator);
-            if (links.isEmpty()) return;
-
-            int before = links.size();
-            WebElement link = wait.until(ExpectedConditions.elementToBeClickable(links.get(0)));
-            link.click();
-
-            // WooCommerce updates via AJAX. Wait for either the clicked element to go stale
-            // or the number of matching links to drop. This avoids chasing parent rows.
-            wait.until(ExpectedConditions.or(
-                    ExpectedConditions.stalenessOf(link),
-                    ExpectedConditions.numberOfElementsToBeLessThan(clickLocator, before)
-            ));
+        // Check if cart is already empty
+        List<WebElement> cartItems = driver.findElements(By.cssSelector("a.remove"));
+        if (cartItems.isEmpty()) {
+            return; // Cart is already empty, nothing to do
         }
-    }
 
+        // Remove all coupons first
+        driver.findElements(By.cssSelector("a.woocommerce-remove-coupon"))
+                .forEach(WebElement::click);
+
+        // Wait for coupon removal to complete
+        new WebDriverWait(driver, Duration.ofSeconds(1))
+                .until(ExpectedConditions.invisibilityOfAllElements(
+                        driver.findElements(By.cssSelector("a.woocommerce-remove-coupon"))));
+
+        // Remove all cart items
+        driver.findElements(By.cssSelector("a.remove"))
+                .forEach(WebElement::click);
+
+        // Wait for cart to be empty
+        new WebDriverWait(driver, Duration.ofSeconds(1))
+                .until(ExpectedConditions.invisibilityOfAllElements(
+                        driver.findElements(By.cssSelector("a.remove"))));
     }
+}
 
 

@@ -25,7 +25,7 @@ public class ShopPOM {
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException(productName + " product not found"));
     }
-
+// Method to select a product by its name
     public void selectProduct(String productName) {
         getProductByName(productName).click();
     }

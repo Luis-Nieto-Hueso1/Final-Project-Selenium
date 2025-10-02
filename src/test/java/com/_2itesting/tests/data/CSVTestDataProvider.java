@@ -2,12 +2,13 @@ package com._2itesting.tests.data;
 
 import java.io.*;
 import java.util.*;
+
 // Utility class to load test data from a CSV file
 public class CSVTestDataProvider {
-
+    // Data class to hold test parameters
     public static List<TestData> loadTestDataFromCSV(String filePath) {
         List<TestData> testDataList = new ArrayList<>();
-
+// Read the CSV file
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             boolean isFirstLine = true;
@@ -17,11 +18,10 @@ public class CSVTestDataProvider {
                     isFirstLine = false; // Skip header
                     continue;
                 }
-
+// Split the line by commas and create TestData objects
                 String[] values = line.split(",");
                 if (values.length >= 13) {
-                    TestData testData = new TestData(
-                            values[0].trim(), // username
+                    TestData testData = new TestData(values[0].trim(), // username
                             values[1].trim(), // password
                             values[2].trim(), // productName
                             values[3].trim(), // coupon

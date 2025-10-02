@@ -18,10 +18,6 @@ public class InstanceHelpers {
         this.driver = driver;
     }
 
-    public WebElement waitForElementToBeClickableHelper(By locator, int timeoutInSeconds){
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
-        return wait.until(ExpectedConditions.elementToBeClickable(locator));
-    }
 
     public Action dragDropHelper(WebElement elm, int movX, int smooth){
         Actions myActionChain = new Actions(driver);

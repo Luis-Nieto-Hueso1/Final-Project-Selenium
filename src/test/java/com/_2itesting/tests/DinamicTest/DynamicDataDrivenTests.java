@@ -139,7 +139,6 @@ public class DynamicDataDrivenTests extends BaseTest {
         assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("https://www.edgewordstraining.co.uk/demo-site/cart/"));
         // Step 3: Apply discount and verify calculations
 
-
         applyDiscountPOM.applyDiscountCode(Helpers.TWO_I_DISCOUNT_COUPON);
 
         navPOM.navCheckout();

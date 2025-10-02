@@ -21,7 +21,7 @@ public final class AllureUtils {
         }
         return ts.getScreenshotAs(OutputType.BYTES); // Allure embeds this as an image
     }
-
+// Alternative method to save screenshot as a file (not used here)
     @Attachment(value = "{name} (HTML)", type = "text/html", fileExtension = ".html")
     public static byte[] attachPageSource(WebDriver driver, String name) {
         if (driver == null) return "No driver".getBytes();

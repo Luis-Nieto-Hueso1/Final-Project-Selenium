@@ -1,6 +1,7 @@
 package com._2itesting.tests.Utils;
 
 import java.math.BigDecimal;
+
 // Immutable data class to hold monetary totals
 // Factory method to create an instance from string inputs
 // Custom toString method for formatted output
@@ -14,13 +15,15 @@ public record TotalsSnapshot(BigDecimal subtotal, BigDecimal discount, BigDecima
         );
     }
 
-    @Override public String toString() {
+    // Custom formatted string representation for logging
+    @Override
+    public String toString() {
         return """
-               Subtotal: %s
-               Discount: %s
-               Shipping: %s
-               Total:    %s
-               """.formatted(MoneyUtils.fmt(subtotal), MoneyUtils.fmt(discount),
+                Subtotal: %s
+                Discount: %s
+                Shipping: %s
+                Total:    %s
+                """.formatted(MoneyUtils.fmt(subtotal), MoneyUtils.fmt(discount),
                 MoneyUtils.fmt(shipping), MoneyUtils.fmt(total));
     }
 }
