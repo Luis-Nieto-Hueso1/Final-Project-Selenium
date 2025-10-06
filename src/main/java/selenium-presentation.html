@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selenium Test Automation Framework</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .presentation-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .slide {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 60px;
+            margin: 30px 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.6s ease-in;
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 1.2em;
+            color: #999;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #764ba2;
+            font-size: 2.8em;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin: 30px 0 20px 0;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 1.5em;
+            color: #555;
+            margin-top: 10px;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .tech-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.4em;
+            transition: transform 0.3s;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .approach-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .approach-card {
+            background: #f8f9fa;
+            padding: 35px;
+            border-radius: 15px;
+            border-left: 6px solid #667eea;
+        }
+
+        .approach-card h4 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+
+        .approach-card p {
+            font-size: 1.2em;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+
+        .highlight-box h3 {
+            margin-top: 0;
+        }
+
+        .highlight-box p, .highlight-box ul {
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 6px solid #28a745;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+
+        .success-box p {
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+                .improve-box {
+            background: #FE9900;
+            border-left: 6px solid #28a745;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+
+        .improve-box p {
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 6px solid #17a2b8;
+            padding: 30px;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+
+        .info-box p {
+            font-size: 1.3em;
+            line-height: 1.8;
+        }
+
+        ul {
+            margin: 20px 0 20px 40px;
+        }
+
+        li {
+            font-size: 1.3em;
+            line-height: 2;
+            color: #333;
+            margin: 15px 0;
+        }
+
+        .emoji-large {
+            font-size: 4em;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .github-link {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .github-link a {
+            display: inline-block;
+            background: #24292e;
+            color: white;
+            padding: 20px 50px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 1.4em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .github-link a:hover {
+            background: #667eea;
+            transform: scale(1.08);
+        }
+
+        .demo-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 40px 0;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .approach-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation-container">
+
+    <!-- Slide 1: Title -->
+    <div class="slide">
+        <div class="slide-number">1/5</div>
+        <h1> E-Commerce Test Automation</h1>
+        <h2>Selenium WebDriver Framework</h2>
+        <p class="subtitle">By Luis Nieto Hueso</p>
+        <div class="emoji-large"></div>
+        <div class="github-link">
+            <a href="https://github.com/Luis-Nieto-Hueso1/Final-Project-Selenium" target="_blank">View on GitHub</a>
+        </div>
+    </div>
+
+    <!-- Slide 2: Technical Approach -->
+    <div class="slide">
+        <div class="slide-number">2/5</div>
+        <h2> Technical Approach</h2>
+
+        <div class="tech-grid">
+            <div class="tech-item">Java + Selenium</div>
+            <div class="tech-item">JUnit 5</div>
+            <div class="tech-item">Page Object Model</div>
+            <div class="tech-item">Data-Driven (CSV)</div>
+            <div class="tech-item">Allure Reports</div>
+        </div>
+
+        <div class="approach-grid">
+            <div class="approach-card">
+                <h4> Clean Architecture</h4>
+                <p>Separation of test logic, page objects, and data providers</p>
+            </div>
+            <div class="approach-card">
+                <h4> Scalable Design</h4>
+                <p>CSV-driven tests for easy test expansion</p>
+            </div>
+            <div class="approach-card">
+                <h4> Automated Workflow</h4>
+                <p>Login → Add to Cart → Apply Discount → Checkout → Verify</p>
+            </div>
+            <div class="approach-card">
+                <h4> Cross-Browser</h4>
+                <p>Chrome, Firefox, and headless execution</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Why Failure Testing -->
+    <div class="slide">
+        <div class="slide-number">3/5</div>
+        <h2> Why I Tested Failures</h2>
+
+        <div class="success-box">
+            <p style="font-size: 1.5em; text-align: center; margin-bottom: 30px;">
+                <strong>Premeditated failure testing validates the system works correctly when things go wrong</strong>
+            </p>
+        </div>
+
+        <div class="approach-grid">
+            <div class="approach-card">
+                <h4>Invalid Login </h4>
+                <p>Check that no one can buy product without login</p>
+            </div>
+            <div class="approach-card">
+                <h4>Wrong Credentials</h4>
+                <p>Verifies security and error handling</p>
+            </div>
+            <div class="approach-card">
+                <h4>Missing Required Fields</h4>
+                <p>Confirms form validation works</p>
+            </div>
+            <div class="approach-card">
+                <h4>Edge Cases</h4>
+                <p>Tests boundary conditions and limits</p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h3>Key Insight</h3>
+            <p>Testing failures isn't about finding bugs—it's about <strong>confirming the application fails gracefully
+                and predictably</strong>. This builds confidence in system reliability.</p>
+        </div>
+    </div>
+
+    <!-- Slide 4: Demo -->
+    <div class="slide">
+        <div class="slide-number">4/5</div>
+        <h2> Live Demo</h2>
+
+        <div class="demo-box">
+            Running Tests...
+        </div>
+
+        <div class="info-box">
+            <p style="text-align: center; font-size: 1.4em;">
+                Watch as the framework executes tests with:
+            </p>
+            <ul style="list-style: none; text-align: center; margin-left: 0;">
+                <li>✓ Automatic screenshot capture new improvement</li>
+                <li>✓ Real-time Allure reporting</li>
+                <li>✓ Cross-browser validation</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Slide 5: Playwright & Conclusion -->
+    <div class="slide">
+        <div class="slide-number">5/5</div>
+        <h2> Skills Expansion</h2>
+
+        <div class="info-box">
+            <h3 style="margin-top: 0;">Also Built with Playwright</h3>
+            <p>Same test scenarios implemented in Microsoft Playwright to expand my automation skills and compare modern
+                testing frameworks.</p>
+        </div>
+
+        <div class="approach-grid">
+            <div class="approach-card">
+                <h4>Learning Goals</h4>
+                <p>Compare Selenium vs Playwright approaches and understand when to use each</p>
+            </div>
+            <div class="approach-card">
+                <h4>Versatility</h4>
+                <p>Build proficiency across multiple automation tools</p>
+            </div>
+        </div>
+
+        <div class="success-box">
+            <h3 style="margin-top: 0;">Key Achievements</h3>
+            <ul>
+                <li>Complete e-commerce test automation framework</li>
+                <li>Industry-standard design patterns (POM, Data-Driven)</li>
+                <li>Comprehensive positive and negative testing</li>
+                <li>Multi-framework implementation (Selenium + Playwright)</li>
+            </ul>
+        </div>
+
+        <div class="improve-box">
+            <h3 style="margin-top: 0;">Improvement</h3>
+            <ul>
+                <li>Complete proper implementation in the screenshot</li>
+                <li>Add More Test Scenarios</li>
+                <li>Logger Instead of System.out</li>
+                <li>Better README with Screenshots</li>
+            </ul>
+        </div>
+
+        <p style="text-align: center; margin-top: 50px; font-size: 2em; color: #667eea;">
+            <strong>Thank You!</strong>
+        </p>
+    </div>
+
+</div>
+</body>
+</html>

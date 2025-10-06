@@ -95,19 +95,11 @@ public class CartPOM {
         driver.findElements(By.cssSelector("a.woocommerce-remove-coupon"))
                 .forEach(WebElement::click);
 
-        // Wait for coupon removal to complete
-        new WebDriverWait(driver, Duration.ofSeconds(1))
-                .until(ExpectedConditions.invisibilityOfAllElements(
-                        driver.findElements(By.cssSelector("a.woocommerce-remove-coupon"))));
 
         // Remove all cart items
         driver.findElements(By.cssSelector("a.remove"))
                 .forEach(WebElement::click);
 
-        // Wait for cart to be empty
-        new WebDriverWait(driver, Duration.ofSeconds(1))
-                .until(ExpectedConditions.invisibilityOfAllElements(
-                        driver.findElements(By.cssSelector("a.remove"))));
     }
 }
 

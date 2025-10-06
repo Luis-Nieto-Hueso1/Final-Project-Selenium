@@ -18,11 +18,30 @@ public class TestProjectSimpleTest extends BaseTest {
 
     @Test
     public void firstTest() {
-        // Step 1: Navigate to login page and authenticate
+        // Inputs: make them explicit and parameterizable later
+        final String username = Helpers.USERNAME;
+        final String productName = "Polo"; // replace with param later
         final String coupon = Helpers.TWO_I_DISCOUNT_COUPON;
-        System.out.println("=== Starting Test Setup ===");
+        final String password = Helpers.PASSWORD;
+        ReportUtils.logInputs(username, password, productName, coupon);
+
+        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
         CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
+
+        boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
+        assertThat("login Successful", loggedIn, is(true));
+        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+
+        navPOM.navPageBasket();
+        cart.clearCart();
+
+
+        System.out.println("=== Cart cleared successfully ===");
+        // Step 1: Navigate to login page and authenticate
+
+        System.out.println("=== Starting Test Setup ===");
+
         waiter = new Waiter(driver, Duration.ofSeconds(10));
 
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
@@ -90,8 +109,29 @@ public class TestProjectSimpleTest extends BaseTest {
     @Test
     public void secondTest() {
 
-        // Step 2: Navigate to shop and select product
+        // Inputs: make them explicit and parameterizable later
+        final String username = Helpers.USERNAME;
+        final String productName = "Polo"; // replace with param later
+        final String coupon = Helpers.TWO_I_DISCOUNT_COUPON;
+        final String password = Helpers.PASSWORD;
+        ReportUtils.logInputs(username, password, productName, coupon);
+
+        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
+        CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
+
+        boolean loggedIn = loginPagePOM.login(username, Helpers.PASSWORD);
+        assertThat("login Successful", loggedIn, is(true));
+        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+
+        navPOM.navPageBasket();
+        cart.clearCart();
+
+
+        System.out.println("=== Cart cleared successfully ===");
+
+        // Step 2: Navigate to shop and select product
+
         CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
         waiter = new Waiter(driver, Duration.ofSeconds(10));
         CartPOM applyDiscountPOM = new CartPOM(driver);

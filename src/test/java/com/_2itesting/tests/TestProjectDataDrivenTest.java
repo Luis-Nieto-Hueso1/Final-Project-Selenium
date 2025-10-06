@@ -32,10 +32,26 @@ public class TestProjectDataDrivenTest extends BaseTest {
     @ParameterizedTest(name = "Discount Test - {0}")
     @MethodSource("discountTestData")
     public void testDiscountCalculation(TestData testData) {
-        System.out.println("=== Running Discount Test with: " + testData + " ===");
 
+        ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
+
+        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
         CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
+
+        boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
+        assertThat("login Successful", loggedIn, is(true));
+        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+
+        navPOM.navPageBasket();
+        cart.clearCart();
+
+
+        System.out.println("=== Cart cleared successfully ===");
+
+        System.out.println("=== Running Discount Test with: " + testData + " ===");
+
+
         waiter = new Waiter(driver, Duration.ofSeconds(10));
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
 
@@ -49,12 +65,13 @@ public class TestProjectDataDrivenTest extends BaseTest {
         // Dynamic product selection based on test data
         selectProductByName(testData.getProductName());
 
+
         assertThat("Should be on product page", driver.getCurrentUrl(),
                 containsString("/product/" + testData.getProductName().toLowerCase()));
         // Add product to cart
         navPOM.navAddCart();
         System.out.println("=== Product added to basket ===");
-// Go to cart
+        // Go to cart
         waiter.clickable(By.linkText("View cart"));
         navPOM.navPageBasket();
         assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("/cart/"));
@@ -68,6 +85,8 @@ public class TestProjectDataDrivenTest extends BaseTest {
         cart.applyDiscountCode(testData.getCoupon());
         System.out.println("=== Coupon applied: " + testData.getCoupon() + " ===");
         waiter.clickable(By.cssSelector("tr.cart-discount td"));
+
+
 
         // Capture totals after discount
         TotalsSnapshot after = TotalsSnapshot.of(cart.getSubtotalText(), cart.getDiscountText(),
@@ -101,11 +120,27 @@ public class TestProjectDataDrivenTest extends BaseTest {
     @ParameterizedTest(name = "Checkout Test - {0}")
     @MethodSource("checkoutTestData")
     public void testCheckoutProcess(TestData testData) {
+        ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
+
+        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
+        CartPOM cart = new CartPOM(driver);
+        NavPOM navPOM = new NavPOM(driver);
+
+        boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
+        assertThat("login Successful", loggedIn, is(true));
+        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+
+        navPOM.navPageBasket();
+        cart.clearCart();
+
+
+        System.out.println("=== Cart cleared successfully ===");
+
+
         System.out.println("=== Running Checkout Test with: " + testData + " ===");
 
-        NavPOM navPOM = new NavPOM(driver);
         CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
-        CartPOM cart = new CartPOM(driver);
+
         CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
         waiter = new Waiter(driver, Duration.ofSeconds(10));
 

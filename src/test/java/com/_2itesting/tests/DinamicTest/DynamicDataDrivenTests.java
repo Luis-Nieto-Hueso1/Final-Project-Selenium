@@ -112,8 +112,27 @@ public class DynamicDataDrivenTests extends BaseTest {
     }
 
     private void runCheckoutTest(TestData testData) {
-        // Step 2: Navigate to shop and select product
+
+
+        ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
+
+        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
+        CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
+
+        boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
+        assertThat("login Successful", loggedIn, is(true));
+        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+
+        navPOM.navPageBasket();
+        cart.clearCart();
+
+
+        System.out.println("=== Cart cleared successfully ===");
+
+        System.out.println("=== Running Discount Test with: " + testData + " ===");
+        // Step 2: Navigate to shop and select product
+
         CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
         waiter = new Waiter(driver, Duration.ofSeconds(10));
         CartPOM applyDiscountPOM = new CartPOM(driver);
@@ -130,7 +149,6 @@ public class DynamicDataDrivenTests extends BaseTest {
 
         System.out.println("=== Product added to basket ===");
         // Wait for "View cart" link to be visible and click it
-        InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
 
         waiter.clickable(By.linkText("View cart"));
 

@@ -124,6 +124,23 @@ public class DrivenTests extends BaseTest {
         waiter = new Waiter(driver, Duration.ofSeconds(10));
 
         try {
+
+            ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
+
+            LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
+
+
+            boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
+            assertThat("login Successful", loggedIn, is(true));
+            assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+
+            navPOM.navPageBasket();
+            cart.clearCart();
+
+
+            System.out.println("=== Cart cleared successfully ===");
+
+            System.out.println("=== Running Discount Test with: " + testData + " ===");
             // Navigate to shop and select product
             navPOM.navPageShop();
             selectProductByName(testData.getProductName());
