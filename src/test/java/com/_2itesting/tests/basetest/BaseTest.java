@@ -1,9 +1,6 @@
 package com._2itesting.tests.basetest;
 
 import com._2itesting.tests.Utils.*;
-import com._2itesting.tests.pomClasses.CartPOM;
-import com._2itesting.tests.pomClasses.LoginPagePOM;
-import com._2itesting.tests.pomClasses.NavPOM;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -19,13 +16,9 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.time.Duration;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 
 public class BaseTest {
     public WebDriver driver;
-    public StringBuffer verificationErrors  = new StringBuffer();
     protected Waiter waiter;
 
 
@@ -75,6 +68,7 @@ public class BaseTest {
 
     @AfterEach
     void tearDown() {
+
         if (driver == null) return;
 
         try {

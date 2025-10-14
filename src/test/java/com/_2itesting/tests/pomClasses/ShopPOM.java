@@ -17,6 +17,7 @@ public class ShopPOM {
         PageFactory.initElements(driver, this);
 
     }
+
     @FindBy(css = "h2.woocommerce-loop-product__title")
     private List<WebElement> productTitles;
     public WebElement getProductByName(String productName) {

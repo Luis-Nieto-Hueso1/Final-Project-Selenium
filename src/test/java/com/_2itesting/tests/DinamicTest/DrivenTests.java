@@ -5,7 +5,9 @@ import com._2itesting.tests.Utils.*;
 import com._2itesting.tests.basetest.BaseTest;
 import com._2itesting.tests.data.CSVTestDataProvider;
 import com._2itesting.tests.data.TestData;
+import com._2itesting.tests.models.UserCredentials;
 import com._2itesting.tests.pomClasses.*;
+import com._2itesting.tests.steps.LoginSteps;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
@@ -127,13 +129,9 @@ public class DrivenTests extends BaseTest {
 
             ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
 
-            LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
-
-
-            boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
-            assertThat("login Successful", loggedIn, is(true));
-            assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
-
+            UserCredentials user = new UserCredentials(testData.getUsername(), testData.getPassword());
+            LoginSteps loginSteps = new LoginSteps(driver);
+            loginSteps.loginAs(user);
             navPOM.navPageBasket();
             cart.clearCart();
 

@@ -5,7 +5,11 @@ import com._2itesting.tests.Utils.*;
 import com._2itesting.tests.basetest.BaseTest;
 import com._2itesting.tests.data.TestData;
 import com._2itesting.tests.data.TestDataProvider;
+import com._2itesting.tests.models.BillingDetails;
+import com._2itesting.tests.models.UserCredentials;
 import com._2itesting.tests.pomClasses.*;
+import com._2itesting.tests.steps.CheckoutSteps;
+import com._2itesting.tests.steps.LoginSteps;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.openqa.selenium.By;
@@ -116,13 +120,11 @@ public class DynamicDataDrivenTests extends BaseTest {
 
         ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
 
-        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
         CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
-
-        boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
-        assertThat("login Successful", loggedIn, is(true));
-        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+        UserCredentials user = new UserCredentials(testData.getUsername(), testData.getPassword());
+        LoginSteps loginSteps = new LoginSteps(driver);
+        loginSteps.loginAs(user);
 
         navPOM.navPageBasket();
         cart.clearCart();
@@ -133,7 +135,8 @@ public class DynamicDataDrivenTests extends BaseTest {
         System.out.println("=== Running Discount Test with: " + testData + " ===");
         // Step 2: Navigate to shop and select product
 
-        CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
+        CheckoutPOM checkoutPOM = new CheckoutPOM(driver, waiter);
+
         waiter = new Waiter(driver, Duration.ofSeconds(10));
         CartPOM applyDiscountPOM = new CartPOM(driver);
         CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
@@ -165,18 +168,11 @@ public class DynamicDataDrivenTests extends BaseTest {
 
         //Fill in the form
 
-        checkoutPOM.fillBillingDetails("Luis", "Hueso", "Edgewords", "2itesting", "London", "camden", "SE10 9LS", " 07956987456");
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
-        checkoutPOM.selectChequeSimple();
+        BillingDetails details = new BillingDetails("Alice","Smith","123 Main St","Apt4B2","Birmingham","West Midlands","B1 1HQ","07111222333");
+        CheckoutSteps checkoutSteps = new CheckoutSteps(driver,waiter);
+        checkoutSteps.fillBillingDetails(details);
 
-        waiter.clickable(By.id("place_order"));
-
-        checkoutPOM.placeOrder();
 
         // Verify order confirmation page
         waiter.clickable(By.cssSelector(".order > strong"));

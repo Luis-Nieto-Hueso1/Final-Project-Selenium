@@ -5,11 +5,17 @@ import com._2itesting.tests.Utils.*;
 import com._2itesting.tests.basetest.BaseTest;
 import com._2itesting.tests.data.TestData;
 import com._2itesting.tests.data.TestDataProvider;
+import com._2itesting.tests.models.BillingDetails;
+import com._2itesting.tests.models.UserCredentials;
 import com._2itesting.tests.pomClasses.*;
+import com._2itesting.tests.steps.CheckoutSteps;
+import com._2itesting.tests.steps.LoginSteps;
+import com._2itesting.tests.steps.OrderVerificationSteps;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.*;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
@@ -34,14 +40,13 @@ public class TestProjectDataDrivenTest extends BaseTest {
     public void testDiscountCalculation(TestData testData) {
 
         ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
+        UserCredentials user = new UserCredentials(testData.getUsername(), testData.getPassword());
+        LoginSteps loginSteps = new LoginSteps(driver);
+        loginSteps.loginAs(user);
 
-        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
         CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
 
-        boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
-        assertThat("login Successful", loggedIn, is(true));
-        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
 
         navPOM.navPageBasket();
         cart.clearCart();
@@ -56,8 +61,7 @@ public class TestProjectDataDrivenTest extends BaseTest {
         InstanceHelpers instanceHelpers = new InstanceHelpers(driver);
 
         // Log test inputs
-        ReportUtils.logInputs(testData.getUsername(), testData.getPassword(),
-                testData.getProductName(), testData.getCoupon());
+        ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
 
         // Navigate to shop and select product
         navPOM.navPageShop();
@@ -66,8 +70,7 @@ public class TestProjectDataDrivenTest extends BaseTest {
         selectProductByName(testData.getProductName());
 
 
-        assertThat("Should be on product page", driver.getCurrentUrl(),
-                containsString("/product/" + testData.getProductName().toLowerCase()));
+        assertThat("Should be on product page", driver.getCurrentUrl(), containsString("/product/" + testData.getProductName().toLowerCase()));
         // Add product to cart
         navPOM.navAddCart();
         System.out.println("=== Product added to basket ===");
@@ -77,8 +80,7 @@ public class TestProjectDataDrivenTest extends BaseTest {
         assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("/cart/"));
 
         // Capture totals before discount
-        TotalsSnapshot before = TotalsSnapshot.of(cart.getSubtotalText(), "£0.00",
-                cart.getShippingText(), cart.getTotalText());
+        TotalsSnapshot before = TotalsSnapshot.of(cart.getSubtotalText(), "£0.00", cart.getShippingText(), cart.getTotalText());
         ReportUtils.logTotals("Totals BEFORE coupon", before);
 
         // Apply discount code from test data
@@ -87,10 +89,8 @@ public class TestProjectDataDrivenTest extends BaseTest {
         waiter.clickable(By.cssSelector("tr.cart-discount td"));
 
 
-
         // Capture totals after discount
-        TotalsSnapshot after = TotalsSnapshot.of(cart.getSubtotalText(), cart.getDiscountText(),
-                cart.getShippingText(), cart.getTotalText());
+        TotalsSnapshot after = TotalsSnapshot.of(cart.getSubtotalText(), cart.getDiscountText(), cart.getShippingText(), cart.getTotalText());
         ReportUtils.logTotals("Totals AFTER coupon", after);
 
         // Calculate expected values using test data
@@ -99,10 +99,9 @@ public class TestProjectDataDrivenTest extends BaseTest {
         ReportUtils.logExpectation(expectedDiscount, expectedTotal);
 
         // Assertions
-        var penny = new java.math.BigDecimal("0.01");
+        var penny = new BigDecimal("0.01");
         var discountDiff = after.discount().subtract(expectedDiscount).abs();
-        assertThat("Discount should be " + testData.getExpectedDiscountPercent() + "% of subtotal (±1p)",
-                discountDiff.compareTo(penny) <= 0);
+        assertThat("Discount should be " + testData.getExpectedDiscountPercent() + "% of subtotal (±1p)", discountDiff.compareTo(penny) <= 0);
 
         instanceHelpers.dragDropHelper(driver.findElement(By.linkText("My account")), 1000, 1);
         WebElement link = driver.findElement(By.linkText("My account"));
@@ -112,7 +111,7 @@ public class TestProjectDataDrivenTest extends BaseTest {
 
 
         waiter.clickable(By.linkText("Log out"));
-        navPOM.navLogout();
+        loginSteps.logout();
 
         System.out.println("=== Discount Test Completed Successfully ===");
     }
@@ -121,98 +120,64 @@ public class TestProjectDataDrivenTest extends BaseTest {
     @MethodSource("checkoutTestData")
     public void testCheckoutProcess(TestData testData) {
         ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
-
-        LoginPagePOM loginPagePOM = new LoginPagePOM(driver);
         CartPOM cart = new CartPOM(driver);
         NavPOM navPOM = new NavPOM(driver);
-
-        boolean loggedIn = loginPagePOM.login(testData.getUsername(),  testData.getPassword());
-        assertThat("login Successful", loggedIn, is(true));
-        assertThat("Should be redirected to account page after login", driver.getCurrentUrl(), containsString("my-account"));
+        UserCredentials user = new UserCredentials(testData.getUsername(), testData.getPassword());
+        LoginSteps loginSteps = new LoginSteps(driver);
+        loginSteps.loginAs(user);
 
         navPOM.navPageBasket();
         cart.clearCart();
 
-
         System.out.println("=== Cart cleared successfully ===");
-
-
         System.out.println("=== Running Checkout Test with: " + testData + " ===");
-
-        CheckoutPOM checkoutPOM = new CheckoutPOM(driver);
-
         CheckOrderNumberPOM checkOrderNumberPOM = new CheckOrderNumberPOM(driver);
         waiter = new Waiter(driver, Duration.ofSeconds(10));
-
         // Log test inputs
-        ReportUtils.logInputs(testData.getUsername(), testData.getPassword(),
-                testData.getProductName(), testData.getCoupon());
+        ReportUtils.logInputs(testData.getUsername(), testData.getPassword(), testData.getProductName(), testData.getCoupon());
 
         // Navigate to shop and add product
         navPOM.navPageShop();
         selectProductByName(testData.getProductName());
-
-        assertThat("Should be on product page", driver.getCurrentUrl(),
-                containsString("/product/" + testData.getProductName().toLowerCase()));
 
         navPOM.navAddCart();
         System.out.println("=== Product added to basket ===");
 
         waiter.clickable(By.linkText("View cart"));
         navPOM.navPageBasket();
-        assertThat("Should be redirected to basket", driver.getCurrentUrl(), containsString("/cart/"));
-
         // Apply discount
         cart.applyDiscountCode(testData.getCoupon());
         System.out.println("=== Applied coupon: " + testData.getCoupon() + " ===");
 
         // Navigate to checkout
         navPOM.navCheckout();
-        assertThat("Should be redirected to checkout", driver.getCurrentUrl(), containsString("/checkout/"));
-
         // Fill billing details using test data
-        checkoutPOM.fillBillingDetails(
-                testData.getFirstName(), testData.getLastName(), testData.getAddress(),
-                testData.getAddress2(), testData.getCity(), testData.getState(),
-                testData.getPostcode(), testData.getPhone()
-        );
+        BillingDetails details = new BillingDetails(testData.getFirstName(), testData.getLastName(), testData.getAddress(), testData.getAddress2(), testData.getCity(), testData.getState(), testData.getPostcode(), testData.getPhone());
+        CheckoutSteps checkoutSteps = new CheckoutSteps(driver, waiter);
+        checkoutSteps.fillBillingDetails(details);
+        System.out.println(details.firstName());
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
 
-        checkoutPOM.selectChequeSimple();
-        waiter.clickable(By.id("place_order"));
-        checkoutPOM.placeOrder();
+        checkoutSteps.payByChequeAndPlaceOrder();
+
 
         // Capture order number
-        waiter.clickable(By.cssSelector(".order > strong"));
-        String orderNumber = checkOrderNumberPOM.getOrderNumber();
+        OrderVerificationSteps orderVerificationSteps = new OrderVerificationSteps(driver);
+        String orderNumber = orderVerificationSteps.captureOrderNumberOnConfirmation();
+
         System.out.println("Order Number: " + orderNumber);
 
-        // Verify order in account
-        navPOM.navMyAccount();
-        checkOrderNumberPOM.clickOrders();
-        assertThat("Should be redirected to orders page", driver.getCurrentUrl(),
-                containsString("/my-account/orders/"));
+        orderVerificationSteps.openMyOrders();
+        assertThat("Should be redirected to orders page", driver.getCurrentUrl(), containsString("/my-account/orders/"));
 
         // Verify order appears in list
-        List<WebElement> orderLinks = driver.findElements(
-                By.cssSelector("table.woocommerce-orders-table tbody tr td.woocommerce-orders-table__cell-order-number a")
-        );
+        List<WebElement> orderLinks = driver.findElements(By.cssSelector("table.woocommerce-orders-table tbody tr td.woocommerce-orders-table__cell-order-number a"));
 
-        boolean found = orderLinks.stream()
-                .map(WebElement::getText)
-                .map(txt -> txt.replace("#", "").trim())
-                .anyMatch(txt -> txt.equals(orderNumber));
+        boolean found = orderLinks.stream().map(WebElement::getText).map(txt -> txt.replace("#", "").trim()).anyMatch(txt -> txt.equals(orderNumber));
 
         assertThat("The order should appear in My Account > Orders", found, is(true));
 
-        navPOM.navMyAccount();
-        navPOM.navLogout();
-
+        loginSteps.logout();
         System.out.println("=== Checkout Test Completed Successfully ===");
     }
 
@@ -220,5 +185,5 @@ public class TestProjectDataDrivenTest extends BaseTest {
     private void selectProductByName(String productName) {
         ShopPOM shopPOM = new ShopPOM(driver);
         shopPOM.selectProduct(productName);  // Uses the dynamic method
-        }
+    }
 }

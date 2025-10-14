@@ -1,15 +1,9 @@
 package com._2itesting.tests.Utils;
 
-import io.qameta.allure.Allure;
+
 import io.qameta.allure.Attachment;
 import org.openqa.selenium.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public final class AllureUtils {
     private AllureUtils() {}

@@ -1,102 +1,91 @@
 package com._2itesting.tests.pomClasses;
 
+import com._2itesting.tests.Utils.Waiter;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 
 // Page Object Model class for the checkout page
 public class CheckoutPOM {
     private WebDriver driver;
-// Constructor
-    public CheckoutPOM(WebDriver driver) {
+    private final Waiter waiter;
+
+    // Constructor
+    public CheckoutPOM(WebDriver driver, Waiter waiter) {
         this.driver = driver;
+        this.waiter = waiter;
         PageFactory.initElements(driver, this);
     }
 
-    // First name field
-    @FindBy(id = "billing_first_name")
-    public WebElement firstNameField;
-    // Last name field
-    @FindBy(id = "billing_last_name")
-    public WebElement lastNameField;
-    // Address line 1 field
-    @FindBy(id = "billing_address_1")
-    public WebElement addressField;
-    // Address line 2 field
-    @FindBy(id = "billing_address_2")
-    public WebElement address2Field;
-    // City field
-    @FindBy(id = "billing_city")
-    public WebElement cityField;
-    // State field
-    @FindBy(id = "billing_state")
-    public WebElement stateField;
-    // Postcode field
-    @FindBy(id = "billing_postcode")
-    public WebElement postcodeField;
-    // Phone field
-    @FindBy(id = "billing_phone")
-    public WebElement phoneField;
-    // Cheque payment method radio button
-    @FindBy(id = "payment_method_cheque")
-    public WebElement chequeField;
-    // Place order button
-    @FindBy(id = "place_order")
-    public WebElement placeOrderField;
+    // === Locators ===
+    @FindBy(id = "billing_first_name") private WebElement firstNameField;
+    @FindBy(id = "billing_last_name") private WebElement lastNameField;
+    @FindBy(id = "billing_address_1") private WebElement address1Field;
+    @FindBy(id = "billing_address_2") private WebElement address2Field;
+    @FindBy(id = "billing_city") private WebElement cityField;
+    @FindBy(id = "billing_state") private WebElement countyField;
+    @FindBy(id = "billing_postcode") private WebElement postcodeField;
+    @FindBy(id = "billing_phone") private WebElement phoneField;
+    @FindBy(id = "payment_method_cheque") private WebElement chequeRadio;
+    @FindBy(css = "li.payment_method_cheque label") private WebElement chequeLabel;
+    @FindBy(id = "place_order") private WebElement placeOrderButton;
+    @FindBy(id = "payment_method_cheque") private WebElement chequeInput;
 
-    // Fill in billing details
-    public void fillBillingDetails(String firstName, String lastName, String address, String address2, String city, String state, String postcode, String phone) {
-        firstNameField.clear();
-        firstNameField.sendKeys(firstName);
 
-        lastNameField.clear();
-        lastNameField.sendKeys(lastName);
+    /** Fills all visible billing details into the form. */
+    public void fillBillingDetails(
+            String firstName,
+            String lastName,
+            String address1,
+            String address2,
+            String city,
+            String county,
+            String postcode,
+            String phone
+    ) {
+        clearAndType(firstNameField, firstName);
+        clearAndType(lastNameField, lastName);
+        clearAndType(address1Field, address1);
+        clearAndType(address2Field, address2);
+        clearAndType(cityField, city);
+        clearAndType(countyField, county);
+        clearAndType(postcodeField, postcode);
+        clearAndType(phoneField, phone);
+    }
 
-        addressField.clear();
-        addressField.sendKeys(address);
-
-        address2Field.clear();
-        address2Field.sendKeys(address2);
-
-        cityField.clear();
-        cityField.sendKeys(city);
-
-        stateField.clear();
-        stateField.sendKeys(state);
-
-        postcodeField.clear();
-        postcodeField.sendKeys(postcode); // must be a **valid postcode** like "SE10 9LS"
-
-        phoneField.clear();
-        phoneField.sendKeys(phone);
-
+    /** Helper to safely clear and type text into a field. */
+    private void clearAndType(WebElement field, String value) {
+        field.clear();
+        field.sendKeys(value);
     }
 
     // Select cheque payment method
-    public void selectChequeSimple() {
-        By chequeInput = By.id("payment_method_cheque");
-        By chequeLabel = By.cssSelector("li.payment_method_cheque label");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(6));
-        // Check if already selected
-        WebElement radio = driver.findElement(chequeInput);
-        if (radio.isSelected()) return; // already selected
-        // Scroll to and click the label
-        WebElement label = wait.until(ExpectedConditions.elementToBeClickable(chequeLabel));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({block:'center'})", label);
+    // CheckoutPOM.java
+    public void selectChequePayment() {
+        waiter.clickable(org.openqa.selenium.By.cssSelector("li.payment_method_cheque label")); // wait until clickable
+
+        if (chequeRadio.isSelected()) return; // already selected
+
+        // Scroll into view
+        ((JavascriptExecutor) driver)
+                .executeScript("arguments[0].scrollIntoView({block:'center'});", chequeLabel);
+
+        // Try normal click, fall back to JS click
         try {
-            label.click(); // normal click
+            chequeLabel.click();
         } catch (ElementClickInterceptedException e) {
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", label); // simple fallback
+            ((JavascriptExecutor) driver)
+                    .executeScript("arguments[0].click();", chequeLabel);
         }
-        // Wait until selected
-        wait.until(ExpectedConditions.elementSelectionStateToBe(chequeInput, true));
+
+        // Verify it's selected
+        waiter.visible((By) chequeRadio);
     }
 
+
     public void placeOrder() {
-        placeOrderField.click();
+        placeOrderButton.click();
     }
 }
