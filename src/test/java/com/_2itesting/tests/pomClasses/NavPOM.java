@@ -6,52 +6,56 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 public class NavPOM {
-    private WebDriver driver;
+    private final WebDriver driver;
 
     public NavPOM(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
-
     }
 
     @FindBy(linkText = "Shop")
-    public WebElement shopField;
-    @FindBy(linkText = "Cart")
-    public WebElement basketField;
-    @FindBy(linkText = "Checkout")
-    public WebElement checkoutField;
-    @FindBy(name = "add-to-cart")
-    public WebElement addCartField;
+    private WebElement shopLink;
+
     @FindBy(linkText = "My account")
-    public WebElement myAccountField;
+    private WebElement myAccountLink;
+
+    @FindBy(linkText = "Cart")
+    private WebElement viewCartLink;
+
+    @FindBy(name = "add-to-cart")
+    private WebElement addToCartButton;
+
     @FindBy(linkText = "Log out")
-    public WebElement logoutButton;
+    private WebElement logoutLink;
 
+    @FindBy(linkText = "Checkout")
+    private WebElement checkoutButton;
 
-    public void navPageShop() {
-        shopField.click();
+    public void clickShop() {
+        shopLink.click();
     }
 
-    public void navPageBasket() {
-        basketField.click();
+    public void clickMyAccount() {
+        myAccountLink.click();
     }
 
-    public void navCheckout() {
-        checkoutField.click();
+    public void clickViewCart() {
+        viewCartLink.click();
     }
 
-    public void navAddCart() {
-
-        addCartField.click();
+    public void clickAddToCart() {
+        addToCartButton.click();
     }
 
-    public void navMyAccount() {
-        myAccountField.click();
+    public void clickLogout() {
+        logoutLink.click();
     }
 
-    public void navLogout() {
-        logoutButton.click();
+    public void clickCheckout() {
+        checkoutButton.click();
     }
 
-
+    public String getCurrentUrl() {
+        return driver.getCurrentUrl();
+    }
 }

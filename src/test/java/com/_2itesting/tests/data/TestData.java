@@ -1,5 +1,7 @@
 package com._2itesting.tests.data;
 
+import com._2itesting.tests.models.ProductData;
+
 // Data class to hold test parameters
 public class TestData {
     private String username;
@@ -106,4 +108,6 @@ public class TestData {
         return String.format("TestData{username='%s', product='%s', coupon='%s', discount=%d%%}",
                 username, productName, coupon, expectedDiscountPercent);
     }
+
+
 }
